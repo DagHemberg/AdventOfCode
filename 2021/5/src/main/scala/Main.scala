@@ -11,7 +11,7 @@ case class Line(start: Pos, end: Pos):
     if      start.x == end.x   then ys.map(y => Pos(start.x, y)).toVector 
     else if start.y == end.y   then xs.map(x => Pos(x, start.y)).toVector 
     else if xs.size == ys.size then xs zip ys map Pos.apply // comment out this line to get solution for task 1
-    else                          Vector.empty[Pos]
+    else                            Vector.empty[Pos]
 
 @main
 def run =
