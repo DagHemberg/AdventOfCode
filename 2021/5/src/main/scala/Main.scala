@@ -7,12 +7,10 @@ case class Line(start: Pos, end: Pos):
   private def range(st: Int, en: Int): Vector[Int] = (st to en by (if st < en then 1 else -1)).toVector
   private val (xs, ys) = (range(start.x, end.x), range(start.y, end.y))
 
-  def isDiagonal = (start.x - end.x).abs == (start.y - end.y).abs
-
   def positions =
-    if      start.x == end.x then ys.map(y => Pos(start.x, y)).toVector 
-    else if start.y == end.y then xs.map(x => Pos(x, start.y)).toVector 
-    else if isDiagonal       then xs zip ys map Pos.apply // comment out this line to get solution for task 1
+    if      start.x == end.x   then ys.map(y => Pos(start.x, y)).toVector 
+    else if start.y == end.y   then xs.map(x => Pos(x, start.y)).toVector 
+    else if xs.size == ys.size then xs zip ys map Pos.apply // comment out this line to get solution for task 1
     else                          Vector.empty[Pos]
 
 @main
