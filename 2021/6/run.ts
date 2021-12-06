@@ -1,20 +1,15 @@
 import * as fs from 'fs'
 
-class fish {
-    daysUntilNew: number
-    
-    constructor(n: number) {
-        this.daysUntilNew = n
-    }
+const raw = fs.readFileSync('../input.txt', 'utf8')
 
-    nextDay() {
-        return this.daysUntilNew - 1 < 0 ? [new fish(6), new fish(8)] : [new fish(this.daysUntilNew - 1)]
-    }
+// fishes grouped by days left
+var fishes: number[] = [...Array(9).keys()]
+    .map(fishGroup => raw.split(",").map(Number).filter(fish => fish == fishGroup).length) 
+
+for (let i = 0; i < 256; i++) {
+    fishes.push(0)
+    const zeroes = fishes.shift() as number
+    [fishes[6], fishes[8]].map(fish => fish + zeroes)
 }
 
-const raw = fs.readFileSync("input.txt", "utf-8")
-const fishes: fish[] = raw.split(",").map(x => parseInt(x)).map(age => new fish(age))
-
-const res = [...Array(256).keys()].reduce((data, _) => data.flatMap(x => x.nextDay()), fishes)
-
-console.log(res.length)
+console.log(fishes.reduce((acc, curr) => acc + curr, 0))
