@@ -9,5 +9,5 @@ object Problem2 extends Solver("01", 5):
       .sliding(3)
       .sliding(2)
       .toVector
-      .map(x => x.head.sum < x.last.sum)
-      .count(identity)
+      .filter(x => x.head.sum < x.last.sum)
+      .size

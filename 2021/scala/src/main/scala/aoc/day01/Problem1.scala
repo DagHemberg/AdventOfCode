@@ -7,5 +7,5 @@ object Problem1 extends Solver("01", 7):
     data
       .map(_.toInt)
       .sliding(2)
-      .filter(x => x(0) < x(1))
+      .filter(x => x.head < x.last)
       .size
