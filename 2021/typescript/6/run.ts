@@ -6,7 +6,7 @@ const fishes: number[] = [...Array(9).keys()]
     .map(fishGroup => raw.split(",").map(Number).filter(fish => fish == fishGroup).length) 
 
 for (let i = 0; i < 256; i++) {
-    fishes.push(fishes.shift() as number)
+    fishes.push(fishes.shift()!)
     fishes[6] += fishes[8]
 }
 
