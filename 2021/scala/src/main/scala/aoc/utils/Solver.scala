@@ -4,8 +4,6 @@ import scala.io.Source.*
 import scala.util.{Try, Success, Failure}
 import Console.*
 
-def clearScreen = println("\u001b[2J")
-
 abstract class Solver[A](day: String, expectedExampleSolution: A) extends App:
 
     private def readFile(folder: String, file: String): Vector[String] =
@@ -18,9 +16,8 @@ abstract class Solver[A](day: String, expectedExampleSolution: A) extends App:
 
     def solve(data: Vector[String]): A
 
-    clearScreen
+    println("\u001b[2J") // clear screen
 
-    // val expectedExampleSolution = readFile("expected", fileName)
     val exampleInput = readFile("examples", s"$day.txt")
     val puzzleInput = readFile("puzzles", s"$day.txt")
 
