@@ -7,10 +7,8 @@ object Problem1 extends Solver("09", 15):
     val matrix = Matrix(data.map(_.split("").map(_.toInt).toVector))
 
     val dangerLevels = matrix.indices
-      .map(i => (matrix.surround(i.row, i.col), i))
-      .filter((surrounding, index) =>
-        surrounding.forall(matrix(index) < matrix(_))
-      )
+      .map(i => (matrix surrounding (i.row, i.col), i))
+      .filter((surrounding, index) => surrounding forall (matrix(index) < matrix(_)))
       .map((_, pos) => matrix(pos) + 1)
 
     dangerLevels.sum

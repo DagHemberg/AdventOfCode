@@ -25,7 +25,7 @@ case class Matrix(input: Vector[Vector[Int]]):
 
   def map(f: Int => Int): Matrix = Matrix(input.map(_.map(f)))
 
-  def surround(row: Int, col: Int) = 
+  def surrounding(row: Int, col: Int) = 
     val (up, down, left, right) = ((row - 1, col), (row + 1, col), (row, col - 1), (row, col + 1))
     Vector(up, down, left, right).filter(!indexOutside(_, _)).map(Index.apply)
 
