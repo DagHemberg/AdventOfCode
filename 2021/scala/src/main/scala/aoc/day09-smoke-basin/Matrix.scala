@@ -29,7 +29,4 @@ case class Matrix(input: Vector[Vector[Int]]):
     val (up, down, left, right) = ((row - 1, col), (row + 1, col), (row, col - 1), (row, col + 1))
     Vector(up, down, left, right).filter(!indexOutside(_, _)).map(Index.apply)
 
-  // def surround(row: Int, col: Int): Matrix =
-  //   slice(row - 1, col - 1)(3, 3)
-
   def size = (input.size, input.head.size)
