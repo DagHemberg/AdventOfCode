@@ -29,16 +29,16 @@ abstract class Solver[A](day: String, expectedExampleSolution: A) extends App:
     println(s"[${BLUE}-${RESET}] Evaluating example input...")
     if examplePassed then 
         println(s"""|[${GREEN}!${RESET}] Example input passed!
-                    |  Output:   ${YELLOW}${result}${RESET}\n""".stripMargin)
+                    |    Output: ${YELLOW}${result}${RESET}\n""".stripMargin)
     else 
         println(s"""|[${RED}!${RESET}] Example failed!
-                    |  Expected: ${YELLOW}${expectedExampleSolution}${RESET}
-                    |  Actual:   ${YELLOW}${result}${RESET}\n""".stripMargin)
+                    |    Expected: ${YELLOW}${expectedExampleSolution}${RESET}
+                    |    Actual:   ${YELLOW}${result}${RESET}\n""".stripMargin)
 
     if examplePassed then
         println(s"[${BLUE}-${RESET}] Evaluating puzzle input...")
         val result = solve(puzzleInput)
         println(s"""|[${GREEN}!${RESET}] Result found!
-                    |  Output:   ${YELLOW}$result${RESET}\n""".stripMargin)
+                    |    Output: ${YELLOW}$result${RESET}\n""".stripMargin)
     else
         println(s"[${YELLOW}!${RESET}] Aborting run...")
