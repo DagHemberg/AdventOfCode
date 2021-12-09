@@ -11,8 +11,7 @@ object Problem1 extends Solver("02", 150):
       .sum
 
     val depth = verticals
-      .map(x => x.split(" "))
-      .map { case Array(a, b) => if a == "up" then -(b.toInt) else b.toInt }
+      .map { case s"$a $b" => if a == "up" then -(b.toInt) else b.toInt }
       .sum
 
     horizontalPos * depth
