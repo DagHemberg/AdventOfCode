@@ -1,8 +1,8 @@
 package aoc.day08
-
-import aoc.utils.Solver
+import aoc.utils.*
 
 object Problem1 extends Solver("08", 26):
+  def name = "Seven Segment Search - Part 1"
   def solve(data: Vector[String]) = data
     .flatMap { case s"$signalPatterns | $output" => output.split(" ") }
     .map(_.size)

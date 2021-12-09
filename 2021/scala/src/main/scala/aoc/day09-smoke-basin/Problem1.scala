@@ -1,8 +1,8 @@
 package aoc.day09
-
 import aoc.utils.*
 
 object Problem1 extends Solver("09", 15):
+  def name = "Smoke Basin - Part 1"
   def solve(data: Vector[String]) =
     val matrix = Matrix(data.map(_.split("").map(_.toInt).toVector))
 

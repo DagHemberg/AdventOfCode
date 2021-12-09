@@ -1,8 +1,8 @@
 package aoc.day05
-
 import aoc.utils.*
 
 object Problem2 extends Solver("05", 12):
+  def name = "Hydrothermal Venture - Part 2"
 
   case class Pos(x: Int, y: Int)
 

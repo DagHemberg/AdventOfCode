@@ -1,8 +1,8 @@
 package aoc.day08
-
 import aoc.utils.*
 
 object Problem2 extends Solver("08", 61229):
+  def name = "Seven Segment Search - Part 2"
   def solve(data: Vector[String]) =
 
     val parsed = data.map { case s"$signalPatterns | $output" =>

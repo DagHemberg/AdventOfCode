@@ -14,6 +14,9 @@ abstract class Solver[A](day: String, expectedExampleSolution: A) extends App:
                             |[${RED}Error${RESET}] $e""".stripMargin)
                 Vector.empty
 
+    def name: String
+    override def toString = s"Day $day: $name"
+
     def solve(data: Vector[String]): A
 
     println("\u001b[2J") // clear screen
@@ -26,6 +29,7 @@ abstract class Solver[A](day: String, expectedExampleSolution: A) extends App:
     val result = solve(exampleInput)
     val examplePassed = result == expectedExampleSolution
 
+    println(s"[${BLUE}-${RESET}] $this")
     println(s"[${BLUE}-${RESET}] Evaluating example input...")
     if examplePassed then 
         println(s"""|[${GREEN}!${RESET}] Example input passed!
