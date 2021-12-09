@@ -4,45 +4,74 @@ import scala.io.Source.*
 import scala.util.{Try, Success, Failure}
 import Console.*
 
-abstract class Solver[A](day: String, expectedExampleSolution: A) extends App:
+abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
 
-    private def readFile(folder: String, file: String): Vector[String] =
-        Try(fromFile(s"./input/$folder/$file").getLines.toVector) match
-            case Success(lines) => lines
-            case Failure(e) =>
-                println(s"""|[${RED}Error${RESET}] Something went wrong when reading $file in $folder:
-                            |[${RED}Error${RESET}] $e""".stripMargin)
-                Vector.empty
+  def name: String
+  def solve(data: Vector[String]): A
 
-    def name: String
-    override def toString = s"Day $day: $name"
+  override def toString = s"Day $day: $name"
 
-    def solve(data: Vector[String]): A
+  private case class TimedEval[A](duration: Double, result: A)
+  private def time(f: => A): TimedEval[A] =
+    val start = System.nanoTime()
+    val result = f
+    val duration = (System.nanoTime() - start) / 1000000000.0
+    TimedEval(duration, result)
 
-    println("\u001b[2J") // clear screen
+  private def error(msg: String, trim: Boolean = false) =
+    s"[${RED}!${RESET}] ${if !trim then s"${RED}Something went wrong${RESET} " else ""}$msg"
 
-    val exampleInput = readFile("examples", s"$day.txt")
-    val puzzleInput = readFile("puzzles", s"$day.txt")
+  private def success(msg: String) =
+    s"[${GREEN}!${RESET}] ${GREEN}$msg${RESET}"
 
-    if Vector(exampleInput, puzzleInput).exists(_.size == 0) then System.exit(0)
-    
-    val result = solve(exampleInput)
-    val examplePassed = result == expectedExampleSolution
+  private def info(msg: String) =
+    s"[${CYAN}+${RESET}] $msg"
 
-    println(s"[${BLUE}-${RESET}] $this")
-    println(s"[${BLUE}-${RESET}] Evaluating example input...")
-    if examplePassed then 
-        println(s"""|[${GREEN}!${RESET}] Example input passed!
-                    |    Output: ${YELLOW}${result}${RESET}\n""".stripMargin)
-    else 
-        println(s"""|[${RED}!${RESET}] Example failed!
-                    |    Expected: ${YELLOW}${expectedExampleSolution}${RESET}
-                    |    Actual:   ${YELLOW}${result}${RESET}\n""".stripMargin)
+  private def readFile(folder: String, file: String) =
+    Try(fromFile(s"./input/$folder/$file").getLines.toVector) match
+      case Success(lines) => lines
+      case Failure(e) =>
+        println(s"""|${error(s"when reading $file in $folder")}:
+                    |    ${e}""".stripMargin)
+        Vector.empty
 
-    if examplePassed then
-        println(s"[${BLUE}-${RESET}] Evaluating puzzle input...")
-        val result = solve(puzzleInput)
-        println(s"""|[${GREEN}!${RESET}] Result found!
-                    |    Output: ${YELLOW}$result${RESET}\n""".stripMargin)
-    else
-        println(s"[${YELLOW}!${RESET}] Aborting run...")
+  println("\u001b[2J") // clear screen
+  println(info(toString))
+
+  val testInput = readFile("examples", s"$day.txt")
+  val puzzleInput = readFile("puzzles", s"$day.txt")
+
+  if Vector(testInput, puzzleInput).exists(_.size == 0) then System.exit(1)
+
+  println(info("Evaluating example input..."))
+
+  private val testEval = Try(time(solve(testInput))) match
+    case Success(eval) => eval
+    case Failure(e) =>
+      print(s"""|${error("when solving the example problem:")}
+                |    $e\n""".stripMargin)
+      System.exit(1)
+      TimedEval(0, expectedTestSolution) // never reached
+
+  private val examplePassed = testEval.result == expectedTestSolution
+
+  if examplePassed then
+    println(f"""|${success("Example input passed!")}
+                |    Output: ${YELLOW}${testEval.result}${RESET}
+                |    Time: ${testEval.duration}%2.6f s%n""".stripMargin)
+
+    println(info("Evaluating puzzle input..."))
+    Try(time(solve(puzzleInput))) match
+      case Success(eval) =>
+        println(f"""|${success("Solution found!")}
+                    |    Output: ${YELLOW}${eval.result}${RESET}
+                    |    Time: ${eval.duration}%2.6f s%n""".stripMargin)
+      case Failure(e) =>
+        print(s"""|${error("when solving the puzzle:")}
+                  |    $e\n""".stripMargin)
+        System.exit(1)
+  else
+    print(s"""|${error(s"${RED}Example failed!${RESET}", trim = true)}
+                |    Expected: ${CYAN}${expectedTestSolution}${RESET}
+                |    Actual:   ${YELLOW}${testEval.result}${RESET}\n""".stripMargin)
+    System.exit(1)
