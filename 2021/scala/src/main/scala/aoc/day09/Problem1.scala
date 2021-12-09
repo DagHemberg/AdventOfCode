@@ -6,13 +6,12 @@ object Problem1 extends Solver("09", 15):
   def solve(data: Vector[String]) =
     val matrix = Matrix(data.map(_.split("").map(_.toInt).toVector))
 
-    matrix.indices
-      .map(x => (matrix.surround(x._1, x._2), x))
+    val dangerLevels = matrix.indices
+      .map(i => (matrix.surround(i.row, i.col), i))
       .filter((surrounding, index) =>
-        surrounding.forall(matrix(index) < matrix(_, _))
+        surrounding.forall(matrix(index) < matrix(_))
       )
-      .map(_._2)
-      .map(matrix.apply)
-      .map(_ + 1)
-      .sum
+      .map((_, pos) => matrix(pos) + 1)
+
+    dangerLevels.sum
       
