@@ -3,6 +3,7 @@ package aoc.utils
 import scala.io.Source.*
 import scala.util.{Try, Success, Failure}
 import Console.*
+import TimedEval.*
 
 abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
 
@@ -10,13 +11,6 @@ abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
   def solve(data: Vector[String]): A
 
   override def toString = s"Day $day: $name"
-
-  private case class TimedEval[A](duration: Double, result: A)
-  private def time(f: => A): TimedEval[A] =
-    val start = System.nanoTime()
-    val result = f
-    val duration = (System.nanoTime() - start) / 1000000000.0
-    TimedEval(duration, result)
 
   private def error(msg: String, trim: Boolean = false) =
     s"[${RED}!${RESET}] ${if !trim then s"${RED}Something went wrong${RESET} " else ""}$msg"
@@ -35,7 +29,8 @@ abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
                     |    ${e}""".stripMargin)
         Vector.empty
 
-  println("\u001b[2J") // clear screen
+  // println("\u001b[2J") // clear screen
+  for i <- 1 to 100 do println()
   println(info(toString))
 
   val testInput = readFile("examples", s"$day.txt")
