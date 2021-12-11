@@ -6,15 +6,15 @@ object Common:
   val incompleteValue = Map(")" -> 1, "]" -> 2, "}" -> 3, ">" -> 4)
 
   extension (str: String)
-    def replaced = str
+    def parensRemoved = str
       .replace("()", "")
       .replace("[]", "")
       .replace("{}", "")
       .replace("<>", "")
 
     def filtered: String =
-      if str.replaced == str then str
-      else str.replaced.filtered
+      if str.parensRemoved == str then str
+      else str.parensRemoved.filtered
 
     def isIncomplete = str.filtered.forall(c => parens.keySet(c.toString))
     def isCorrupt = !str.isIncomplete
