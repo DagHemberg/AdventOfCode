@@ -4,12 +4,13 @@ import aoc.utils.*
 object Problem2 extends Solver("09", 1134):
   def name = "Smoke Basin - Part 2"
   def solve(data: Vector[String]) =
-    val matrix = Matrix(data.map(_.split("").map(_.toInt).toVector))
+    val heights = data.map(_.split("").map(_.toInt).toVector).toMatrix
 
-    val lowPoints = matrix.indices
-      .map(i => (matrix surrounding (i.row, i.col), i))
-      .filter((surrounding, index) => surrounding forall (matrix(index) < matrix(_)))
-      .map((_, pos) => pos)
+    val lowPoints = heights
+      .indices
+      .toVector
+      .flatten
+      .filter(index => (heights surrounding index) forall (heights(index) < heights(_)))
 
     val basins = lowPoints.map(pos =>
       val collected = scala.collection.mutable.Set(pos)
@@ -17,11 +18,11 @@ object Problem2 extends Solver("09", 1134):
       while collected.size != prevSize do
         prevSize = collected.size
         collected.foreach(ind =>
-          matrix
-            .surrounding(ind.row, ind.col)
+          heights
+            .surrounding(ind)
             .toSet
             .diff(collected)
-            .foreach(index => if matrix(index) != 9 then collected += index)
+            .foreach(index => if heights(index) != 9 then collected += index)
         )
 
       collected.size

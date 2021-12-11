@@ -4,12 +4,14 @@ import aoc.utils.*
 object Problem1 extends Solver("09", 15):
   def name = "Smoke Basin - Part 1"
   def solve(data: Vector[String]) =
-    val matrix = Matrix(data.map(_.split("").map(_.toInt).toVector))
+    val heights = data.map(_.split("").map(_.toInt).toVector).toMatrix
 
-    val dangerLevels = matrix.indices
-      .map(i => (matrix surrounding (i.row, i.col), i))
-      .filter((surrounding, index) => surrounding forall (matrix(index) < matrix(_)))
-      .map((_, pos) => matrix(pos) + 1)
+    val dangerLevels = heights
+      .indices
+      .toVector
+      .flatten
+      .filter(index => (heights surrounding index) forall (heights(index) < heights(_)))
+      .map(pos => heights(pos) + 1)
 
     dangerLevels.sum
       
