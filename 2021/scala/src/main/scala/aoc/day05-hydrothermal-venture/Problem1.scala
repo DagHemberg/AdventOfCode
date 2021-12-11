@@ -1,21 +1,13 @@
 package aoc.day05
 import aoc.utils.*
+import Common.*
 
 object Problem1 extends Solver("05", 5):
   def name = "Hydrothermal Venture - Part 1"
 
-  case class Pos(x: Int, y: Int)
-
-  case class Line(start: Pos, end: Pos):
-
-    private def range(st: Int, en: Int): Vector[Int] =
-      (st to en by (if st < en then 1 else -1)).toVector
-
-    private val (xs, ys) = (range(start.x, end.x), range(start.y, end.y))
-
-    def positions =
-      if start.x == end.x then ys.map(y => Pos(start.x, y)).toVector
-      else if start.y == end.y then xs.map(x => Pos(x, start.y)).toVector
+  extension (l: Line) def positions =
+      if l.start.x == l.end.x then l.ys.map(y => Pos(l.start.x, y)).toVector
+      else if l.start.y == l.end.y then l.xs.map(x => Pos(x, l.start.y)).toVector
       else Vector.empty[Pos]
 
   def solve(data: Vector[String]) =
