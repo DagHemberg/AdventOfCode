@@ -12,7 +12,7 @@ extension [A](a: A)
 extension [A: Numeric](xs: Vector[A])
   infix def dot (ys: Vector[A]) = 
     require(xs.size == ys.size, "Vectors must be the same size")
-    xs.zip(ys).map((x, y) => x * y).sum
+    (xs zip ys map (_ * _)).sum
 
   infix def cross (ys: Vector[A]) = 
     require(xs.size == 3 && ys.size == 3, "Cross product only defined for 3D vectors")
