@@ -8,7 +8,6 @@ object Problem1 extends Solver("08", 26):
     .map(_.size)
     .groupBy(identity)
     .mapValues(_.size)
-    .toVector
-    .filter(Vector(2,3,4,7) contains _._1)
+    .filter(c => Set(2,3,4,7)(c._1))
     .map(_._2)
     .sum

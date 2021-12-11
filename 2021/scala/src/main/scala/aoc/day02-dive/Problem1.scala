@@ -7,11 +7,11 @@ object Problem1 extends Solver("02", 150):
     val horizontals = data filter (_.startsWith("forward"))
     val verticals = data diff horizontals
     val horizontalPos = horizontals
-      .map(x => x.split(" ")(1).toInt)
+      .map(x => x.split(" ").last.toInt)
       .sum
 
     val depth = verticals
-      .map { case s"$a $b" => if a == "up" then -(b.toInt) else b.toInt }
+      .map { case s"$command $value" => value.toInt * (if command == "up" then -1 else 1) }
       .sum
 
     horizontalPos * depth
