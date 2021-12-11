@@ -1,6 +1,4 @@
-package aoc.day09
-
-case class Index(row: Int, col: Int)
+package aoc.utils
 
 case class Matrix[A](input: Vector[Vector[A]]):
   override def toString = input.map(_.mkString(" ")).mkString("\n")
@@ -10,6 +8,7 @@ case class Matrix[A](input: Vector[Vector[A]]):
 
   def indexOutsideBounds(row: Int, col: Int) =
     row < 0 || row >= height || col < 0 || col >= width
+  def indexOutsideBounds(index: Index): Boolean = indexOutsideBounds(index.row, index.col)
 
   val height = input.size
   val width = input.head.size
