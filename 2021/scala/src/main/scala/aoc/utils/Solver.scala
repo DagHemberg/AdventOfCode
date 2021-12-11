@@ -48,8 +48,8 @@ abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
   private val testEval = Try(time(solve(testInput))) match
     case Success(eval) => eval
     case Failure(e) =>
-      print(s"""|${error("when solving the example problem:")}
-                |    $e\n""".stripMargin)
+      println(s"""|${error("when solving the example problem:")}
+                  |    $e""".stripMargin)
       System.exit(1)
       TimedEval(0, expectedTestSolution) // never reached
 
@@ -71,7 +71,8 @@ abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
                   |    $e\n""".stripMargin)
         System.exit(1)
   else
-    print(s"""|${error(s"${RED}Example failed!${RESET}", trim = true)}
+    println(f"""|${error(s"${RED}Example failed!${RESET}", trim = true)}
                 |    Expected: ${CYAN}${expectedTestSolution}${RESET}
-                |    Actual:   ${YELLOW}${testEval.result}${RESET}\n""".stripMargin)
+                |    Actual:   ${YELLOW}${testEval.result}${RESET}
+                |    Time: ${testEval.duration}%2.6f s""".stripMargin)
     System.exit(1)
