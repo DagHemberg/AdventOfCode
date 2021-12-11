@@ -16,10 +16,8 @@ object Problem2 extends Solver("02", 900):
         depth += aim * value 
     }
 
-    data.foreach(x => 
-      val command = x.split(" ")(0)
-      val value = x.split(" ")(1).toInt
-      updatePos(command, value)
-    )
+    data.foreach {
+      case s"$command $value" => updatePos(command, value.toInt)
+    }
 
     hPos * depth
