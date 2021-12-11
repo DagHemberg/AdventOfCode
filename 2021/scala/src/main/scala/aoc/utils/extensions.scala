@@ -7,9 +7,10 @@ extension [A](a: A)
     println(a)
     a
 
-// will these be useful?
-// probably not but they're fun to do
 extension [A: Numeric](xs: Vector[A])
+  def average = xs.sum.toDouble / xs.size
+  def middle = xs.sorted.apply(xs.size / 2)
+
   infix def dot (ys: Vector[A]) = 
     require(xs.size == ys.size, "Vectors must be the same size")
     (xs zip ys map (_ * _)).sum
