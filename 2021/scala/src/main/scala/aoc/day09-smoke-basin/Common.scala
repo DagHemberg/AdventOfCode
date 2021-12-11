@@ -1,5 +1,5 @@
 package aoc.day09
-import aoc.utils.*
+import aoc.utils.{Matrix, Index}
 
 extension (m: Matrix[Int])
   def surrounding(row: Int, col: Int) = 
