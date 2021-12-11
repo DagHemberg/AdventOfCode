@@ -8,6 +8,5 @@ object Problem2 extends Solver("01", 5):
       .map(_.toInt)
       .sliding(3)
       .sliding(2)
-      // .toVector
       .filter(x => x.head.sum < x.last.sum)
       .size
