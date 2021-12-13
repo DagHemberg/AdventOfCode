@@ -4,7 +4,7 @@ import math.Numeric.Implicits.infixNumericOps
 
 extension [A](a: A)
   def debug = 
-    println(a)
+    println(s"[${Console.YELLOW}!${Console.RESET}] $a")
     a
 
 extension [A: Numeric](xs: Vector[A])

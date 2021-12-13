@@ -13,10 +13,10 @@ abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
   override def toString = s"Day $day: $name"
 
   private def error(msg: String, trim: Boolean = false) =
-    s"[${RED}!${RESET}] ${if !trim then s"${RED}Something went wrong${RESET} " else ""}$msg"
+    s"[${RED}X${RESET}] ${if !trim then s"${RED}Something went wrong${RESET} " else ""}$msg"
 
   private def success(msg: String) =
-    s"[${GREEN}!${RESET}] ${GREEN}$msg${RESET}"
+    s"[${GREEN}O${RESET}] ${GREEN}$msg${RESET}"
 
   private def info(msg: String) =
     s"[${CYAN}+${RESET}] $msg"
