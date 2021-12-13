@@ -1,6 +1,8 @@
 package aoc.utils
 
-case class Pos(x: Int, y: Int)
+case class Pos(x: Int, y: Int):
+  def transpose = Pos(y, x)
+  def tuple = (x, y)
 case class Line(start: Pos, end: Pos)
 case class Index(row: Int, col: Int) // functionally equivalent to Pos
 
