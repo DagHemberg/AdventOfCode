@@ -19,17 +19,20 @@ object Problem2 extends Solver("13", "See above"):
       case Command("y", n) => pts.map(p => if p.y < n then p else Pos(p.x, 2 * n - p.y))
     )
 
-    val textWidth = folded.maxBy(_.x).x + 1
+    // pretty :)
+    val textWidth = (folded.maxBy(_.x).x + 1).toInt
     val text = Matrix
-      (folded.maxBy(_.y).y + 1, folded.maxBy(_.x).x + 1)
+      ((folded.maxBy(_.y).y + 1).toInt, (folded.maxBy(_.x).x + 1).toInt)
       ((x, y) => folded(Pos(y, x)))
         .toVector
         .map(_.map(if _ then s"${Console.GREEN_B}  ${Console.RESET}" else "  "))
         .map(r => s"    │ ${r.mkString} │")
         .mkString("\n")
 
-    println(s"""|[${Console.YELLOW}!${Console.RESET}] ┌─${Vector.fill(textWidth * 2)("─").mkString}─┐
-                |$text
-                |    └─${Vector.fill(textWidth * 2)("─").mkString}─┘""".stripMargin)
+    s"""|┌─${Vector.fill(textWidth * 2)("─").mkString}─┐
+        |$text
+        |    └─${Vector.fill(textWidth * 2)("─").mkString}─┘""".stripMargin.debug
 
+    // theres no actual expected output for the example 
+    // here, so we have to manually make it pass the check
     "See above"
