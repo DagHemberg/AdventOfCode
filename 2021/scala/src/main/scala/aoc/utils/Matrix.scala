@@ -47,8 +47,34 @@ case class Matrix[A](input: IndexedSeq[IndexedSeq[A]]):
     slice(index.row, index.col)(width, height)
 
   def transpose = input.transpose.toMatrix // ??? since when is this a thing
+  def flipCols = input.map(_.reverse).toMatrix
+  def flipRows = input.reverse.toMatrix
+
+  def appendedLeft(other: Matrix[A]): Matrix[A] = 
+    require(other.height == height, "Can't append matrices of different heights to the side")
+    Matrix(input.zip(other.input).map((row, otherRow) => otherRow ++ row))
+
+  def appendedRight(other: Matrix[A]): Matrix[A] =
+    require(other.height == height, "Can't append matrices of different heights to the side")
+    Matrix(input.zip(other.input).map((row, otherRow) => row ++ otherRow))
+
+  def appendedTop(other: Matrix[A]): Matrix[A] =
+    require(other.width == width, "Can't append matrices of different widths to the top")
+    Matrix(other.input ++ input)
+
+  def appendedBottom(other: Matrix[A]): Matrix[A] =
+    require(other.width == width, "Can't append matrices of different widths to the bottom")
+    Matrix(input ++ other.input)
+
+  def zip[B](other: Matrix[B]): Matrix[(A, B)] =
+    require(other.height == height && other.width == width, "Can't zip matrices of different dimensions")
+    Matrix(input.zip(other.input).map((row, otherRow) => row.zip(otherRow)))
 
   def indices: Matrix[Index] = 
     (0 until height).map(row => (0 until width).map(col => Index(row, col))).toMatrix
 
   def size = (input.size, input.head.size)
+
+object Matrix:
+  def apply[A](height: Int, width: Int)(f: (Int, Int) => A): Matrix[A] = 
+    Matrix((0 until height).map(row => (0 until width).map(col => f(row, col))))
