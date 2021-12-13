@@ -14,8 +14,8 @@ object Problem1 extends Solver("13", 17):
       .reverse
       .map { case s"fold along $dir=$value" => Command(dir, value.toInt) }
 
-    val foldedOnce = commands.head match
+    val pointsFoldedOnce = commands.head match
       case Command("x", n) => points.map(p => if p.x < n then p else Pos(2 * n - p.x, p.y))
       case Command("y", n) => points.map(p => if p.y < n then p else Pos(p.x, 2 * n - p.y))
 
-    foldedOnce.distinct.size
+    pointsFoldedOnce.distinct.size
