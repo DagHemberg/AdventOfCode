@@ -5,6 +5,7 @@
 ### Metals ###
 .class
 *.log
+*.worksheet.sc
 
 # sbt specific
 .cache
