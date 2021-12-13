@@ -1,6 +1,5 @@
 package aoc.day05
 import aoc.utils.*
-import Common.*
 
 object Problem1 extends Solver("05", 5):
   def name = "Hydrothermal Venture - Part 1"
