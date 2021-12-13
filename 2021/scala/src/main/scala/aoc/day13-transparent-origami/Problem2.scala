@@ -20,9 +20,9 @@ object Problem2 extends Solver("13", "See above"):
     )
 
     // pretty :)
-    val textWidth = (folded.maxBy(_.x).x + 1).toInt
+    val textWidth = (folded.maxBy(_.x).x + 1)
     val text = Matrix
-      ((folded.maxBy(_.y).y + 1).toInt, (folded.maxBy(_.x).x + 1).toInt)
+      ((folded.maxBy(_.y).y + 1), (folded.maxBy(_.x).x + 1))
       ((x, y) => folded(Pos(y, x)))
         .toVector
         .map(_.map(if _ then s"${Console.GREEN_B}  ${Console.RESET}" else "  "))
