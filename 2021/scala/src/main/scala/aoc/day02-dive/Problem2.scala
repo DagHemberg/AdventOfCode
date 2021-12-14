@@ -15,8 +15,6 @@ object Problem2 extends Solver("02", 900):
         hPos += value
         depth += aim * value 
 
-    data.foreach {
-      case s"$command $value" => updatePos(command, value.toInt)
-    }
+    data.foreach { case s"$command $value" => updatePos(command, value.toInt) }
 
     hPos * depth

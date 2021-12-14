@@ -1,6 +1,8 @@
 package aoc.utils
+import math.Numeric.Implicits.infixNumericOps
 
- import math.Numeric.Implicits.infixNumericOps
+case class Index(row: Int, col: Int) // functionally equivalent to Pos in package object
+
 
 extension [A](vss: IndexedSeq[IndexedSeq[A]]) 
   def toMatrix = Matrix(vss)
@@ -8,8 +10,20 @@ extension [A](vss: IndexedSeq[IndexedSeq[A]])
 extension [A: Numeric](mat: Matrix[A])
   def sum = mat.toVector.flatten.sum
   def product = mat.toVector.flatten.product
-  // todo: matrix multiplication and addition / subtraction
-  // todo: determinant
+  def +(other: Matrix[A]) = mat zip other map ((a, b) => a + b)
+  def -(other: Matrix[A]) = mat zip other map ((a, b) => a - b)
+  def *(other: Matrix[A]) = 
+    require(mat.width == other.height)
+    Matrix(mat.height, other.width)((row, col) => mat.row(row) dot other.col(col))
+
+  def determinant: A =     
+    require(mat.width == mat.height)
+    if (mat.width == 1) mat.toVector.flatten.head
+    else if (mat.width == 2) (mat.row(0)(0) * mat.row(1)(1) - mat.row(0)(1) * mat.row(1)(0))
+    else (0 until mat.width)
+      .map(i => (if i % 2 == 0 then mat.col(i)(0) else -mat.col(i)(0)) * mat.dropCol(i).dropRow(0).determinant)
+      .sum
+
 
 case class Matrix[A](input: IndexedSeq[IndexedSeq[A]]):
   require(input.size > 0, "Matrix must have at least one row")
@@ -21,8 +35,8 @@ case class Matrix[A](input: IndexedSeq[IndexedSeq[A]]):
 
   override def toString = "\n" + input.map(_.mkString(" ")).mkString("\n")
 
-  def col(col: Int) = input.map(_(col))
-  def row(row: Int) = input(row)
+  def col(col: Int) = input.map(_(col)).toVector
+  def row(row: Int) = input(row).toVector
 
   def apply(row: Int, col: Int): A = input(row)(col)
   def apply(index: Index): A = input(index.row)(index.col)
@@ -65,6 +79,9 @@ case class Matrix[A](input: IndexedSeq[IndexedSeq[A]]):
   def appendedBottom(other: Matrix[A]): Matrix[A] =
     require(other.width == width, "Can't append matrices of different widths to the bottom")
     Matrix(input ++ other.input)
+
+  def dropRow(row: Int) = (input.take(row) ++ input.drop(row + 1)).toMatrix
+  def dropCol(col: Int) = input.map(row => row.take(col) ++ row.drop(col + 1)).toMatrix
 
   def zip[B](other: Matrix[B]): Matrix[(A, B)] =
     require(other.height == height && other.width == width, "Can't zip matrices of different dimensions")

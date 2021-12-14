@@ -4,10 +4,9 @@ import aoc.utils.*
 object Problem2 extends Solver("08", 61229):
   def name = "Seven Segment Search - Part 2"
   def solve(data: Vector[String]) =
-
-    val parsed = data.map { case s"$signalPatterns | $output" =>
-      signalPatterns.split(" ").map(_.toSet).toVector -> output.split(" ").map(_.toSet).toVector
-    }.toVector
+    val parsed = data
+      .map { case s"$signalPatterns | $output" => signalPatterns.split(" ").map(_.toSet).toVector -> output.split(" ").map(_.toSet).toVector }
+      .toVector
 
     val decryptedNumbers = parsed.map((signalPatterns, output) =>
 

@@ -4,7 +4,6 @@ import aoc.utils.{Matrix, Index}
 case class Octopus(energy: Int):
   def blinking = energy == 10
   def blinked = energy == 0
-  override def toString = if blinking || blinked then "X" else energy.toString
 
 extension [A](matrix: Matrix[A])
   def surrounding(ind: Index) = Vector
@@ -30,5 +29,4 @@ extension (octopodes: Matrix[Octopus])
     if octopodes == octopodes.stepBlink then octopodes
     else octopodes.stepBlink.stepRecursive
 
-  // def step(n: Int) = (1 to n).foldLeft(octopodes)((octs, _) => octs.stepOnce.stepRecur)
   def step = octopodes.stepOnce.stepRecursive
