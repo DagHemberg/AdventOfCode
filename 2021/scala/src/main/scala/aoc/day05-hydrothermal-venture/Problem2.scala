@@ -10,17 +10,8 @@ object Problem2 extends Solver("05", 12):
     else if l.xs.size == l.ys.size then l.xs zip l.ys map Pos.apply
     else Vector.empty[Pos]
 
-  def solve(data: Vector[String]) =
-
-    val lines = data.map {
-        case s"$x1,$y1 -> $x2,$y2" => Line(Pos(x1.toInt, y1.toInt), Pos(x2.toInt, y2.toInt))
-      }
-
-    val allPositions = lines.flatMap(_.positions)
-    val intersections = allPositions
-      .groupBy(identity)
-      .filter((id, coll) => coll.size > 1)
-      .keys
-      .toVector
+  def solve(data: Vector[String]) = 
+    given Vector[String] = data
+    given (Line => Vector[Pos]) = positions
 
     intersections.size

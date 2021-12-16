@@ -7,3 +7,12 @@ extension (l: Line)
 
   def xs: Vector[Int] = range(l.start.x, l.end.x)
   def ys: Vector[Int] = range(l.start.y, l.end.y)
+
+def intersections(using data: Vector[String], positions: Line => Vector[Pos]) = 
+  data
+    .map { case s"$x1,$y1 -> $x2,$y2" => Line(Pos(x1.toInt, y1.toInt), Pos(x2.toInt, y2.toInt)) }
+    .flatMap(positions)
+    .groupBy(identity)
+    .filter((id, coll) => coll.size > 1)
+    .keys
+    .toVector
