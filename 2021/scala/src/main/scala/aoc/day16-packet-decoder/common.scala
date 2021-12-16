@@ -19,9 +19,11 @@ extension (str: String)
 def generatePacket(str: String)(using packetTypeOperation: (Long, ListBuffer[Packet]) => Long): Packet =   
   str.typeId match 
     case 4 => 
-      val t = str.drop(6).sliding(5,5).toVector
-      val cont = t.takeWhile(_.head == '1').map(_.tail) :+ t.dropWhile(_.head == '1').map(_.tail).head
-      Packet(5 * cont.size + 6, str.versionId, cont.mkString.toDec, Vector.empty)
+      val valueSequences = str.drop(6).sliding(5,5).toVector
+      val values = 
+        valueSequences.takeWhile(_.head == '1').map(_.tail) 
+        :+ valueSequences.dropWhile(_.head == '1').map(_.tail).head
+      Packet(5 * values.size + 6, str.versionId, values.mkString.toDec, Vector.empty)
     
     case id => 
       str.lengthId match
