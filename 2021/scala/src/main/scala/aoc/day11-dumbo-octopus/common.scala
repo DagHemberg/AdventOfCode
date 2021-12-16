@@ -1,5 +1,5 @@
 package aoc.day11
-import aoc.utils.{Matrix, Index}
+import aoc.utils.*
 
 case class Octopus(energy: Int):
   def blinking = energy == 10
@@ -7,7 +7,7 @@ case class Octopus(energy: Int):
 
 extension [A](matrix: Matrix[A])
   def surrounding(ind: Index) = Vector
-    .tabulate(3, 3)((i, j) => Index(ind.row + i - 1, ind.col + j - 1))
+    .tabulate(3, 3)((r, c) => Index(ind.row + r - 1, ind.col + c - 1))
     .flatten
     .filter(_ != Index(ind.row, ind.col))
     .filterNot(matrix.indexOutsideBounds)
