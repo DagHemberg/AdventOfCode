@@ -21,15 +21,24 @@ abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
   private def info(msg: String) =
     s"[${CYAN}+${RESET}] $msg"
 
+  private def tinyStack(e: Throwable) =
+    s"""|[${RED}X${RESET}] ${e.getClass.getSimpleName}: ${e.getMessage}
+        |${e.getStackTrace
+            .dropWhile(s => !s.toString.startsWith("aoc"))
+            .takeWhile(s => !s.toString.startsWith("aoc.utils.Solver"))
+            .dropRight(1)
+            .toVector
+            .map(s => s"      $s")
+            .mkString("\n")}""".stripMargin
+
   private def readFile(folder: String, file: String) =
-    Try(fromFile(s"./input/$folder/$file").getLines.toVector) match
+    Try(fromFile(s"input/$folder/$file").getLines.toVector) match
       case Success(lines) => lines
       case Failure(e) =>
         println(s"""|${error(s"when reading $file in $folder")}:
                     |    ${e}""".stripMargin)
         Vector.empty
 
-  // println("\u001b[2J") // clear screen
   for i <- 1 to 100 do println()
   println(info(toString))
 
@@ -44,7 +53,7 @@ abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
     case Success(eval) => eval
     case Failure(e) =>
       println(s"""|${error("when solving the example problem:")}
-                  |    $e""".stripMargin)
+                  |${tinyStack(e)}""".stripMargin)
       System.exit(1)
       TimedEval(0, expectedTestSolution) // never reached
 
@@ -63,7 +72,7 @@ abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
                     |    Time: ${eval.duration}%2.6f s%n""".stripMargin)
       case Failure(e) =>
         print(s"""|${error("when solving the puzzle:")}
-                  |    $e\n""".stripMargin)
+                  |${tinyStack(e)}\n""".stripMargin)
         System.exit(1)
   else
     println(f"""|${error(s"${RED}Example failed!${RESET}", trim = true)}

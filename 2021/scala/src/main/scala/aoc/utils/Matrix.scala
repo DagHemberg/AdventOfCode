@@ -1,8 +1,12 @@
 package aoc.utils
 import math.Numeric.Implicits.infixNumericOps
 
-case class Index(row: Int, col: Int) // functionally equivalent to Pos in package object
-
+case class Index(row: Int, col: Int):
+  override def toString: String = s"($row, $col)"
+  def up = Index(row - 1, col)
+  def down = Index(row + 1, col)
+  def left = Index(row, col - 1)
+  def right = Index(row, col + 1)
 
 extension [A](vss: IndexedSeq[IndexedSeq[A]]) 
   def toMatrix = Matrix(vss)
@@ -24,6 +28,10 @@ extension [A: Numeric](mat: Matrix[A])
       .map(i => (if i % 2 == 0 then mat.col(i)(0) else -mat.col(i)(0)) * mat.dropCol(i).dropRow(0).determinant)
       .sum
 
+extension [A](mat: Matrix[Matrix[A]])
+  def flatten = mat.toVector
+    .map(_.reduce((acc, curr) => acc.appendedRight(curr)))
+    .reduce((acc, curr) => acc.appendedBottom(curr))
 
 case class Matrix[A](input: IndexedSeq[IndexedSeq[A]]):
   require(input.size > 0, "Matrix must have at least one row")
@@ -33,23 +41,24 @@ case class Matrix[A](input: IndexedSeq[IndexedSeq[A]]):
   val height = input.size
   val width = input.head.size
 
-  override def toString = "\n" + input.map(_.mkString(" ")).mkString("\n")
-
-  def col(col: Int) = input.map(_(col)).toVector
-  def row(row: Int) = input(row).toVector
+  override def toString = s"\n${input.map(_.mkString(" ")).mkString("\n")}"
 
   def apply(row: Int, col: Int): A = input(row)(col)
   def apply(index: Index): A = input(index.row)(index.col)
 
+  def row(row: Int) = input(row).toVector
+  def col(col: Int) = input.map(_(col)).toVector
+  
   def toVector = input.map(_.toVector).toVector
+  def rows = toVector
+  def cols = toVector.transpose
 
   def indexOutsideBounds(row: Int, col: Int): Boolean =
     row < 0 || row >= height || col < 0 || col >= width
   def indexOutsideBounds(index: Index): Boolean = 
     indexOutsideBounds(index.row, index.col)
 
-  // nothing that changes the size of the matrix because idk how to handle that
-  def map[B](f: A => B) = Matrix(input.map(_.map(f)))
+  def map[B](f: A => B) = input.map(_.map(f)).toMatrix
   def forEach(f: A => Unit) = input.foreach(_.foreach(f))
   def count(f: A => Boolean) = input.map(_.count(f)).sum
   def forall(f: A => Boolean) = input.forall(_.forall(f))
