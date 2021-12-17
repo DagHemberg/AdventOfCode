@@ -5,8 +5,8 @@ import scala.collection.mutable.ListBuffer
 case class Packet(size: Int, version: Int, value: Long, subPackets: Vector[Packet]):
   // for debugging
   override def toString = 
-    if subPackets.isEmpty then s"[v$version :$value]" 
-    else s"[v$version :$value ![${subPackets.mkString(", ")}]]"
+    if subPackets.isEmpty then s"{v$version :$value}" 
+    else s"{v$version :$value ![${subPackets.mkString(", ")}]}"
 
 def generateBinaryString(str: String) = str.map(hexChar => f"${BigInt(hexChar.toString, 16).toString(2).toInt}%04d").mkString
 

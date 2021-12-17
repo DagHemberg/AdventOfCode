@@ -1,29 +1,23 @@
 package aoc
 // import com.github.dwickern.macros.NameOf.*
 import math.Numeric.Implicits.infixNumericOps
+import Console.*
 
 package object utils:
 
   // extensions
   extension [A](a: A)
     def debug = 
-      println(s"[${Console.YELLOW}*${Console.RESET}] $a") // add nameof when thats available
+      println(s"[${YELLOW}*${RESET}] $a") // add nameof when thats available
       a
     
     def log = 
-      println(s"[${Console.CYAN}*${Console.RESET}] $a")
+      println(s"[${CYAN}*${RESET}] $a")
       a
 
     def warn(f: A => Boolean) = 
-      if f(a) then println(s"[${Console.RED}!${Console.RESET}] $a")
+      if f(a) then println(s"[${RED}!${RESET}] $a")
       a
-
-    def time = 
-      val start = System.currentTimeMillis()
-      val result = a
-      val end = System.currentTimeMillis()
-      println(s"[${Console.GREEN}+${Console.RESET}] $a took ${end - start}ms")
-      result
 
   extension [A: Numeric](xs: Vector[A])
     def average = xs.sum.toDouble / xs.size
@@ -48,8 +42,10 @@ package object utils:
   case class Pos(x: Int, y: Int):
     def transpose = Pos(y, x)
     def tuple = (x, y)
-    def +(that: Pos) = Pos(x + that.x, y + that.y)
-    def -(that: Pos) = Pos(x - that.x, y - that.y)
+    def +(p: Pos) = Pos(x + p.x, y + p.y)
+    def +(p: (Int, Int)) = Pos(x + p._1, y + p._2)
+    def -(p: Pos) = Pos(x - p.x, y - p.y)
+    def -(p: (Int, Int)) = Pos(x - p._1, y - p._2)
     
   case class Line(start: Pos, end: Pos)
 
