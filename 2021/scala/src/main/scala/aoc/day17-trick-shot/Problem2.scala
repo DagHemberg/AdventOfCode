@@ -29,6 +29,7 @@ object Problem2 extends Solver("17", 112):
 
     val allPossibleVelocities = 
       for 
+        // somewhat reasonable ranges imo
         x <- (1 to xRange.min).filter(v => (1 to v).sum < xRange.min).max + 1 to xRange.max
         y <- yRange.min to -(yRange.min + 1)
       yield
