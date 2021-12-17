@@ -19,8 +19,8 @@ object Problem2 extends Solver("13", "See above"):
 
     s"""|┌─${Vector.fill(textWidth * 2)("─").mkString}─┐
         |$text
-    |    └─${Vector.fill(textWidth * 2)("─").mkString}─┘""".stripMargin.debug
+    |    └─${Vector.fill(textWidth * 2)("─").mkString}─┘""".stripMargin.log
 
-    // theres no actual expected output for the example 
+    // theres no actual checkable expected output for the example 
     // here, so we have to manually make it pass the check
     "See above"

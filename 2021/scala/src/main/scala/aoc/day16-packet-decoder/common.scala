@@ -34,7 +34,7 @@ def generatePacket(str: String)(using packetTypeOperation: (Long, ListBuffer[Pac
           while subPackets.size > 0 do
             val packet = generatePacket(subPackets)
             lb += packet
-            subPackets = subPackets.drop(packet.size.toInt)
+            subPackets = subPackets.drop(packet.size)
 
           Packet(22 + lb.map(_.size).sum, str.versionId, packetTypeOperation(id, lb), lb.toVector)
         
@@ -47,6 +47,6 @@ def generatePacket(str: String)(using packetTypeOperation: (Long, ListBuffer[Pac
             val packet = generatePacket(subPackets)
             lb += packet
             subPacketsLeft -= 1
-            subPackets = subPackets.drop(packet.size.toInt)
+            subPackets = subPackets.drop(packet.size)
 
           Packet(18 + lb.map(_.size).sum, str.versionId, packetTypeOperation(id, lb), lb.toVector)
