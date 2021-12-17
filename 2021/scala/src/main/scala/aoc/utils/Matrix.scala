@@ -11,6 +11,9 @@ case class Index(row: Int, col: Int):
 extension [A](vss: IndexedSeq[IndexedSeq[A]]) 
   def toMatrix = Matrix(vss)
 
+extension [A: Numeric](n: A) 
+  def *:(m: Matrix[A]): Matrix[A] = m map (_ * n)
+
 extension [A: Numeric](mat: Matrix[A])
   def sum = mat.toVector.flatten.sum
   def product = mat.toVector.flatten.product
@@ -19,6 +22,7 @@ extension [A: Numeric](mat: Matrix[A])
   def *(other: Matrix[A]) = 
     require(mat.width == other.height)
     Matrix(mat.height, other.width)((row, col) => mat.row(row) dot other.col(col))
+  def :*(n: A) = mat map (_ * n)
 
   def determinant: A =     
     require(mat.width == mat.height)
@@ -93,7 +97,7 @@ case class Matrix[A](input: IndexedSeq[IndexedSeq[A]]):
   def dropCol(col: Int) = input.map(row => row.take(col) ++ row.drop(col + 1)).toMatrix
 
   def zip[B](other: Matrix[B]): Matrix[(A, B)] =
-    require(other.height == height && other.width == width, "Can't zip matrices of different dimensions")
+    require(size == other.size, "Can't zip matrices of different dimensions")
     Matrix(input.zip(other.input).map((row, otherRow) => row.zip(otherRow)))
 
   def indices: Matrix[Index] = 
