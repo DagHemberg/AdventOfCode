@@ -42,8 +42,10 @@ package object utils:
   case class Pos(x: Int, y: Int):
     def transpose = Pos(y, x)
     def tuple = (x, y)
-    def +(that: Pos) = Pos(x + that.x, y + that.y)
-    def -(that: Pos) = Pos(x - that.x, y - that.y)
+    def +(p: Pos) = Pos(x + p.x, y + p.y)
+    def +(p: (Int, Int)) = Pos(x + p._1, y + p._2)
+    def -(p: Pos) = Pos(x - p.x, y - p.y)
+    def -(p: (Int, Int)) = Pos(x - p._1, y - p._2)
     
   case class Line(start: Pos, end: Pos)
 
