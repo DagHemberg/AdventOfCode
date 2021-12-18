@@ -8,7 +8,7 @@ object Problem2 extends Solver("17", 112):
   case class Target(xs: Range, ys: Range)
   case class Probe(vel: Vel, pos: Pos)(using target: Target):
     override def toString = s"v=${vel.tuple} @ $pos"
-    def step = Probe(Vel(if vel.x != 0 then vel.x - 1 else 0, vel.y - 1), pos + vel)
+    def stepOnce = Probe(Vel(if vel.x != 0 then vel.x - 1 else 0, vel.y - 1), pos + vel)
     def missedTarget = pos.y < target.ys.min
     def inTarget = (target.xs contains pos.x) && (target.ys contains pos.y)
 
@@ -20,18 +20,18 @@ object Problem2 extends Solver("17", 112):
     given Target = Target(xRange, yRange)
 
     extension (p: Probe)
-      def stepRecur: Option[Probe] = 
+      def launch: Option[Probe] = 
         if p.missedTarget then None
         else if p.inTarget then Some(p)
-        else p.step.stepRecur
+        else p.stepOnce.launch
 
-    def hitsTarget(p: Probe) = p.stepRecur.isDefined
+    def hitsTarget(p: Probe) = p.launch.isDefined
 
     val allPossibleVelocities = 
       for 
         // somewhat reasonable ranges imo
-        x <- (1 to xRange.min).filter(v => (1 to v).sum < xRange.min).max + 1 to xRange.max
-        y <- yRange.min to -(yRange.min + 1)
+        x <- (1 to xRange.min).filter(v => (1 to v).sum <= xRange.min).max to xRange.max
+        y <- yRange.min until yRange.min.abs
       yield
         Probe(Vel(x, y), Pos(0, 0))
 
