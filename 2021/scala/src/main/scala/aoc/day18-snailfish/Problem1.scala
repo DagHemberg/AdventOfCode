@@ -3,9 +3,8 @@ import aoc.utils.*
 
 object Problem1 extends Solver("18", 4140L):
 
-  case class Pair(first: Pair | Int, second: Pair | Int)
-
   def name = "Snailfish - Part 1"
   def solve(data: Vector[String]) = 
-
-    1
+    val numbers = data.map(_.parse())
+    
+    numbers.reduce(_.debug + _.debug).magnitude
