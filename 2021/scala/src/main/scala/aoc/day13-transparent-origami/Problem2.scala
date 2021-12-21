@@ -6,9 +6,8 @@ object Problem2 extends Solver("13", "See above"):
   def solve(data: Vector[String]) = 
     given Vector[String] = data
     val folded = fold(points, commands)
-
+    
     // pretty :)
-    val textWidth = (folded.maxBy(_.x).x + 1)
     val text = Matrix
       (folded.maxBy(_.y).y + 1, folded.maxBy(_.x).x + 1)
       ((x, y) => folded(Pos(y, x)))
@@ -17,6 +16,7 @@ object Problem2 extends Solver("13", "See above"):
         .map(r => s"    │ ${r.mkString} │")
         .mkString("\n")
 
+    val textWidth = (folded.maxBy(_.x).x + 1)
     s"""|┌─${Vector.fill(textWidth * 2)("─").mkString}─┐
         |$text
     |    └─${Vector.fill(textWidth * 2)("─").mkString}─┘""".stripMargin.log
