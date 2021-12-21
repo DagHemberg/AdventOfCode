@@ -7,4 +7,4 @@ object Problem1 extends Solver("06", 5934L):
     val input = data.map(_.toInt).toVector
     val fishes = (0 to 8).map(i => input.count(_ == i)).toVector.map(_.toLong)
     
-    (0 until 80).foldLeft(fishes)((c, _) => c.tail.updated(6, c.tail(6) + c.head) :+ c.head).sum
+    LazyList.iterate(fishes)(c => c.tail.updated(6, c.tail(6) + c.head) :+ c.head)(80).sum
