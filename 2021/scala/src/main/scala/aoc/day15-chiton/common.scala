@@ -12,6 +12,9 @@ extension (mat: Matrix[Int])
     Set(i.up, i.down, i.left, i.right).filterNot(mat.indexOutsideBounds)
 
 def path(using caves: Matrix[Int]) =
+  val start = Index(0, 0)
+  val end = Index(caves.height - 1, caves.width - 1)
+  
   val edges = mutable.Map(caves
     .indices
     .toVector
@@ -20,12 +23,10 @@ def path(using caves: Matrix[Int]) =
       index -> (caves surrounding index).map(s => Edge(s, caves(index))))*
   )
 
-  val start = Index(0, 0)
-  val end = Index(caves.height - 1, caves.width - 1)
-
   val dist = mutable.Map.empty[Index, Int] withDefaultValue Int.MaxValue
   val prev = mutable.Map.empty[Index, Index]
   val q = mutable.PriorityQueue(Node(start, 0))(nodeOrder)
+  
   dist(start) = 0
 
   var found = false
