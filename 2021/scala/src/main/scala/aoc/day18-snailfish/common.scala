@@ -1,111 +1,122 @@
 package aoc.day18
 import aoc.utils.*
 
+extension (br: Branch) 
+  def red: Branch = 
+    import Operation.*
+    br.determineAction match
+      case Neither   => br
+      case Splitting => br.firstSpl match
+        case Some(leaf) => br
+          .updated(leaf.index, leaf.split)
+          .refresh
+          .red
+        case None => br
+      case Exploding => br.firstExp match
+        case Some(bruh) => 
+          val l: Leaf = bruh.left.asInstanceOf[Leaf]
+          val r: Leaf = bruh.right.asInstanceOf[Leaf]
+          val bef = br.leafAt(l.index - 1).getOrElse(l)
+          val aft = br.leafAt(r.index + 1).getOrElse(r)
+          br
+            .updated(l.index - 1, Leaf(bef.value + l.value))
+            .updated(r.index + 1, Leaf(aft.value + r.value))
+            .removeExplodedNode(l.index, r.index)
+            .refresh
+            .red
+        case None => br
+
 extension (str: String)
+  def addIndex = 
+    val str2 = raw"\d+".r.replaceAllIn(str, x => s"($x,A)")
+    str2.zipWithIndex.map((c, i) => if c == 'A' then str2.take(i).count(_ == c) else c).mkString
+  
   def parse(depth: Int = 1): Branch = 
-    // todo remove the ugly
-    val lr = raw"[^\[\]]*"
-    val side = raw"(\[($lr|\[($lr|\[($lr|\[($lr|\[$lr\])*\])*\])*\])*\]|\d+)"
-    val rgxp = s"($side(?=,))|((?<=,)$side)".r
-    
-    val Vector(first, second) = rgxp.findAllIn(str).toVector.map(x =>
-      if x.toIntOption.isDefined then Leaf(depth, x.toInt)
-      else x.parse(depth + 1)
+    def getPairs(start: Int, str: String): Int = 
+      if str(1) == '(' then str.indexOf(')') + 1
+      else
+        var i = start
+        var x = 0
+        var found = false
+        while !found && i < str.length do
+          if str(i) == '[' then x += 1
+          else if str(i) == ']' then x -= 1
+          if x == 0 then found = true
+          i += 1
+        i
+
+    val firstStop = getPairs(1, str)
+    val Vector(first, second) = Vector(
+      str.slice(1, firstStop), 
+      str.slice(firstStop + 1, str.size - 1)
+    ).map(x => x match
+      case s"($value,$index)" => Leaf(value.toInt, depth, index.toInt)
+      case _ => x.parse(depth + 1)
     )
     
-    Branch(depth, first, second)
+    Branch(first, second, depth)
 
 trait Tree:
   def magnitude: Long
-  def incDepth: Tree
+  def refresh = toString.addIndex.parse()
 
-case class Branch(depth: Int, left: Tree, right: Tree) extends Tree:
+case class Branch(left: Tree, right: Tree, depth: Int = 1) extends Tree:
   override def toString = s"[$left,$right]"
-  def incDepth = Branch(depth + 1, left.incDepth, right.incDepth)
   def magnitude = 3 * left.magnitude + 2 * right.magnitude
 
   infix def +(other: Branch): Branch = 
-    import Operation.*
-    val newBranch = Branch(
-      depth, 
-      Branch(depth + 1, left.incDepth, right.incDepth), 
-      Branch(other.depth + 1, other.left.incDepth, other.right.incDepth)
-    )
+    Branch(
+      Branch(left, right), 
+      Branch(other.left, other.right)
+    ).refresh.red
 
-    def red(br: Branch): Branch = 
-      br.determineAction match
-        case Neither   => br
-        case Splitting => 
-          val splittingNumber = br.firstSpl.get
-          red(br
-            .toString
-            .replaceFirst(
-              splittingNumber.toString, 
-              splittingNumber.split.toString
-            )
-            .parse())
-        case Exploding => 
-          red(br.explode)
-
-    red(newBranch)
-        
-case class Leaf(depth: Int, value: Int) extends Tree:
-  override def toString = value.toString
-  def incDepth = Leaf(depth + 1, value)
+case class Leaf(value: Int, depth: Int = 0, index: Int = 0) extends Tree:
+  override def toString = s"${value.toString}"
   def magnitude = value
-  def split = if value >= 10 then Branch(
-    depth, 
-    Leaf(depth + 1, (value / 2.0).floor.toInt), 
-    Leaf(depth + 1, (value / 2.0).ceil.toInt)
-  ) else Leaf(depth, value)
+  def split = if value >= 10 then 
+    Branch(
+      Leaf((value / 2.0).floor.toInt), 
+      Leaf((value / 2.0).ceil.toInt),
+    )
+  else Leaf(value)
 
 enum Operation:
   case Exploding, Splitting, Neither
 
-extension (branch: Branch)
-  def explode = 
-    "".debug
-    val raw = branch.debug.toString
-    val i = raw.indexOf(branch.firstExp.get.toString.debug).debug
-    val Vector(f, l) = raw"\d+".r.findAllIn(branch.firstExp.get.toString).toVector.map(_.toInt)
-    val (before, after) = raw.splitAt(i).debug
-    val lastBefore = raw"\d+".r.findAllIn(before).toVector.lastOption.debug
-    val firstAfter = raw"\d+".r.findAllIn(after.drop(5)).toVector.headOption.debug
-    val indB = if lastBefore.isDefined then before.lastIndexOf(lastBefore.get).debug else 0
-    val indA = if firstAfter.isDefined then (after.drop(5).indexOf(firstAfter.get) + 5 + before.size).debug else 0
-    "".debug
-    raw
-      .updated(indB, if indB == 0 then raw(0).toChar else 'B').debug
-      .updated(indA, if indA == 0 then raw(0).toChar else 'A').debug
-      .replaceAll(
-        "B", 
-        if lastBefore.isDefined then (lastBefore.get.toInt + f).toString else "B"
-      ).debug
-      .replaceAll(
-        "A", 
-        if firstAfter.isDefined then (firstAfter.get.toInt + l).toString else "A"
-      ).debug
-      .replace(branch.firstExp.get.toString, "0").debug
-      .parse()
-
 extension (tree: Tree)
-  def firstExp: Option[Tree] = tree match
-    case Branch(depth, left, right) if depth == 5 => Some(tree)
-    case Branch(depth, left, right) => left.firstExp orElse right.firstExp
+  def updated(index: Int, newTree: Tree): Tree = 
+    tree.update(index, newTree).refresh
+  
+  def removeExplodedNode(index1: Int, index2: Int): Tree = tree match
+    case Branch(Leaf(_, _, i1), Leaf(_, _, i2), _) if i1 == index1 && i2 == index2 => Leaf(0)
+    case Branch(Leaf(_, _, i1), Leaf(_, _, i2), _) => tree
+    case Branch(l, r, d) => Branch(l.removeExplodedNode(index1, index2), r.removeExplodedNode(index1, index2), d)
+    case _ => tree
+
+  def leafAt(index: Int): Option[Leaf] = tree match
+    case Leaf(value, depth, i) if i == index => Some(Leaf(value, depth, i))
+    case Branch(left, right, depth) => left.leafAt(index) orElse right.leafAt(index)
+    case _ => None
+
+  def update(index: Int, newTree: Tree): Tree = tree match
+    case Leaf(v, d, i) if i == index => newTree
+    case Leaf(v, d, i) => Leaf(v, d, i)
+    case Branch(l, r, d) => Branch(l.update(index, newTree), r.update(index, newTree), d)
+    
+  def firstExp: Option[Branch] = tree match
+    case Branch(left, right, depth) if depth == 5 => Some(Branch(left, right, depth))
+    case Branch(left, right, depth) => left.firstExp orElse right.firstExp
     case _ => None
 
   def firstSpl: Option[Leaf] = tree match
-    case Leaf(depth, value) if value >= 10 => Some(Leaf(depth, value))
-    case Branch(depth, left, right) => left.firstSpl orElse right.firstSpl
+    case Leaf(value, depth, index) if value >= 10 => Some(Leaf(value, depth, index))
+    case Branch(left, right, depth) => left.firstSpl orElse right.firstSpl
     case _ => None
 
   def determineAction: Operation = 
     import Operation.*
-    (tree.debug.firstExp, tree.firstSpl) match
-      case (Some(branch), Some(leaf)) => 
-        if tree.toString.indexOf(branch.toString) < tree.toString.indexOf(leaf.toString)
-        then Exploding.debug
-        else Splitting.debug
-      case (Some(branch), None) => Exploding.debug
-      case (None, Some(leaf))   => Splitting.debug
-      case neither              => Neither.debug
+    (tree.firstExp, tree.firstSpl) match
+      case (Some(branch), Some(leaf)) => Exploding
+      case (Some(branch), None) => Exploding
+      case (None, Some(leaf))   => Splitting
+      case neither              => Neither
