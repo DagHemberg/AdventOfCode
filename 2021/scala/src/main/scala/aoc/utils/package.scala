@@ -1,5 +1,7 @@
 package aoc
-// import com.github.dwickern.macros.NameOf.*
+// turns out it just prints "a"
+// maybe i should've thought of that
+// import com.github.dwickern.macros.NameOf.* 
 import math.Numeric.Implicits.infixNumericOps
 import Console.*
 
@@ -8,11 +10,15 @@ package object utils:
   // extensions
   extension [A](a: A)
     def debug = 
-      println(s"[${YELLOW}*${RESET}] $a") // add nameof when thats available
+      println(s"[${YELLOW}*${RESET}] $a")
       a
     
     def log = 
       println(s"[${CYAN}*${RESET}] $a")
+      a
+
+    def logattr[B](f: A => B) = 
+      println(s"[${CYAN}*${RESET}] $f($a)")
       a
 
     def warn(f: A => Boolean) = 
