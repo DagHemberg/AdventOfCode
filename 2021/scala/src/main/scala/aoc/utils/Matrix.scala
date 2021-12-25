@@ -8,21 +8,22 @@ case class Index(row: Int, col: Int):
   def left = Index(row, col - 1)
   def right = Index(row, col + 1)
 
-extension [A](vss: IndexedSeq[IndexedSeq[A]]) 
-  def toMatrix = Matrix(vss)
+extension [A: Numeric](xs: Vector[A])
+  def *(mat: Matrix[A]): Vector[A] = (Vector(xs).transpose.toMatrix * mat).toVector.flatten
 
-extension [A: Numeric](n: A) 
-  def *:(m: Matrix[A]): Matrix[A] = m map (_ * n)
+extension [A](vss: Vector[Vector[A]]) 
+  def toMatrix = Matrix(vss)
 
 extension [A: Numeric](mat: Matrix[A])
   def sum = mat.toVector.flatten.sum
   def product = mat.toVector.flatten.product
   def +(other: Matrix[A]) = mat zip other map ((a, b) => a + b)
   def -(other: Matrix[A]) = mat zip other map ((a, b) => a - b)
-  def *(other: Matrix[A]) = 
+  def *(other: Matrix[A]): Matrix[A] = 
     require(mat.width == other.height)
     Matrix(mat.height, other.width)((row, col) => mat.row(row) dot other.col(col))
-  def :*(n: A) = mat map (_ * n)
+
+  def *(vec: Vector[A]): Vector[A] = (mat * Vector(vec).transpose.toMatrix).toVector.flatten
 
   def determinant: A =     
     require(mat.width == mat.height)
@@ -37,7 +38,7 @@ extension [A](mat: Matrix[Matrix[A]])
     .map(_.reduce((acc, curr) => acc.appendedRight(curr)))
     .reduce((acc, curr) => acc.appendedBottom(curr))
 
-case class Matrix[A](input: IndexedSeq[IndexedSeq[A]]):
+case class Matrix[A](input: Vector[Vector[A]]):
   require(input.size > 0, "Matrix must have at least one row")
   require(input.head.size > 0, "Matrix must have at least one column")
   require(input.forall(_.size == input.head.size), "All rows must have the same length")
@@ -101,10 +102,10 @@ case class Matrix[A](input: IndexedSeq[IndexedSeq[A]]):
     Matrix(input.zip(other.input).map((row, otherRow) => row.zip(otherRow)))
 
   def indices: Matrix[Index] = 
-    (0 until height).map(row => (0 until width).map(col => Index(row, col))).toMatrix
+    (0 until height).toVector.map(row => (0 until width).toVector.map(col => Index(row, col))).toMatrix
 
   def size = (input.size, input.head.size)
 
 object Matrix:
   def apply[A](height: Int, width: Int)(f: (Int, Int) => A): Matrix[A] = 
-    Matrix((0 until height).map(row => (0 until width).map(col => f(row, col))))
+    Matrix((0 until height).toVector.map(row => (0 until width).toVector.map(col => f(row, col))))
