@@ -7,13 +7,13 @@ object Problem2 extends Solver("03", 230L):
     given Vector[String] = data
     
     val Seq(oxygen, co2) = Seq(1, 2).map(n => (0 until data.head.size)
-      .foldLeft(data)((acc, i) => 
+      .foldLeft(data)((numbers, i) => 
         val filtered = 
-          acc.filter(_(i) == (if n == 1 
-            then mostCommonAt(i)(using acc) 
-            else leastCommonAt(i)(using acc))
+          numbers.filter(_(i) == (if n == 1 
+            then mostCommonAt(i)(using numbers) 
+            else leastCommonAt(i)(using numbers))
           )
-        if filtered.isEmpty then acc else filtered
+        if filtered.isEmpty then numbers else filtered
       )
       .head
       .toDecimal)
