@@ -3,18 +3,17 @@ import aoc.utils.*
 
 case class Dim(min: Long, max: Long):
   def size: Long = max - min + 1
+  def valid = min <= max
 
 case class Cuboid(x: Dim, y: Dim, z: Dim, sign: Int):
-  def size = x.size * y.size * z.size * sign
-  def valid = x.min <= x.max && y.min <= y.max && z.min <= z.max
-
-  def intersect(other: Cuboid): Cuboid =
-    Cuboid(
-      Dim(x.min max other.x.min, x.max min other.x.max),
-      Dim(y.min max other.y.min, y.max min other.y.max),
-      Dim(z.min max other.z.min, z.max min other.z.max),
-      -other.sign
-    )
+  def volume = x.size * y.size * z.size * sign
+  def intersect(other: Cuboid): Option[Cuboid] =
+    val dimX = Dim(x.min max other.x.min, x.max min other.x.max)
+    val dimY = Dim(y.min max other.y.min, y.max min other.y.max)
+    val dimZ = Dim(z.min max other.z.min, z.max min other.z.max)
+    if Seq(dimX, dimY, dimZ).forall(_.valid)
+    then Some(Cuboid(dimX, dimY, dimZ, -other.sign))
+    else None 
 
 def cuboids(using data: Vector[String]) =
 
@@ -29,6 +28,6 @@ def cuboids(using data: Vector[String]) =
     }
 
   cbs.tail.foldLeft(Vector(cbs.head))((all, cuboid) =>
-    val intersections = all ++ all.map(cuboid.intersect).filter(_.valid)
+    val intersections = all ++ all.flatMap(cuboid.intersect)
     if cuboid.sign > 0 then intersections :+ cuboid else intersections
   )
