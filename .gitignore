@@ -225,4 +225,6 @@ hs_err_pid*
 # Support for Project snippet scope
 !.vscode/*.code-snippets
 
+other/
+
 # End of https://www.toptal.com/developers/gitignore/api/scala,metals,sbt,visualstudiocode,node
