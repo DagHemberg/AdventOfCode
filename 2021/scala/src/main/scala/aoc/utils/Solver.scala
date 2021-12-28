@@ -5,7 +5,7 @@ import scala.util.{Try, Success, Failure}
 import Console.*
 import TimedEval.*
 
-abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
+abstract class Solver[A](day: String, expectedExampleSolution: A) extends App:
 
   def name: String
   def solve(data: Vector[String]): A
@@ -13,7 +13,7 @@ abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
   override def toString = s"Day $day: $name"
 
   private def error(msg: String, trim: Boolean = false) =
-    s"[${RED}x${RESET}] ${if !trim then s"${RED}Something went wrong${RESET} " else ""}$msg"
+    s"[${RED}!${RESET}] ${if !trim then s"${RED}Something went wrong${RESET} " else ""}$msg"
 
   private def success(msg: String) =
     s"[${GREEN}o${RESET}] ${GREEN}$msg${RESET}"
@@ -22,7 +22,7 @@ abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
     s"[${CYAN}+${RESET}] $msg"
 
   private def tinyStack(e: Throwable) =
-    s"""|[${RED}X${RESET}] ${e.getClass.getSimpleName}: ${e.getMessage}
+    s"""|[${RED}!${RESET}] ${e.getClass.getSimpleName}: ${e.getMessage}
         |${e.getStackTrace
             .dropWhile(s => !s.toString.startsWith("aoc"))
             .takeWhile(s => !s.toString.startsWith("aoc.utils.Solver"))
@@ -49,34 +49,33 @@ abstract class Solver[A](day: String, expectedTestSolution: A) extends App:
 
   println(info("Evaluating example input..."))
 
-  private val testEval = Try(time(solve(testInput))) match
-    case Success(eval) => eval
+  private val exampleEval = Try(time(solve(testInput))) match
+    case Success(eval) => Some(eval)
     case Failure(e) =>
       println(s"""|${error("when solving the example problem:")}
                   |${tinyStack(e)}""".stripMargin)
-      System.exit(1)
-      TimedEval(0, expectedTestSolution) // never reached
+      None
 
-  private val examplePassed = testEval.result == expectedTestSolution
+  exampleEval match
+    case Some(exampleEval) =>
+      if exampleEval.result == expectedExampleSolution then
+        println(f"""|${success("Example input passed!")}
+                    |    Output: ${YELLOW}${exampleEval.result}${RESET}
+                    |    Time: ${exampleEval.duration}%2.6f s%n""".stripMargin)
 
-  if examplePassed then
-    println(f"""|${success("Example input passed!")}
-                |    Output: ${YELLOW}${testEval.result}${RESET}
-                |    Time: ${testEval.duration}%2.6f s%n""".stripMargin)
+        println(info("Evaluating puzzle input..."))
+        Try(time(solve(puzzleInput))) match
+          case Success(eval) =>
+            println(f"""|${success("Solution found!")}
+                        |    Output: ${YELLOW}${eval.result}${RESET}
+                        |    Time: ${eval.duration}%2.6f s%n""".stripMargin)
+          case Failure(e) =>
+            print(s"""|${error("when solving the puzzle:")}
+                      |${tinyStack(e)}\n""".stripMargin)
 
-    println(info("Evaluating puzzle input..."))
-    Try(time(solve(puzzleInput))) match
-      case Success(eval) =>
-        println(f"""|${success("Solution found!")}
-                    |    Output: ${YELLOW}${eval.result}${RESET}
-                    |    Time: ${eval.duration}%2.6f s%n""".stripMargin)
-      case Failure(e) =>
-        print(s"""|${error("when solving the puzzle:")}
-                  |${tinyStack(e)}\n""".stripMargin)
-        System.exit(1)
-  else
-    println(f"""|${error(s"${RED}Example failed!${RESET}", trim = true)}
-                |    Expected: ${CYAN}${expectedTestSolution}${RESET}
-                |    Actual:   ${YELLOW}${testEval.result}${RESET}
-                |    Time: ${testEval.duration}%2.6f s""".stripMargin)
-    System.exit(1)
+      else
+        println(f"""|${error(s"${RED}Example failed!${RESET}", trim = true)}
+                    |    Expected: ${CYAN}${expectedExampleSolution}${RESET}
+                    |    Actual:   ${YELLOW}${exampleEval.result}${RESET}
+                    |    Time: ${exampleEval.duration}%2.6f s""".stripMargin)
+    case None => 
