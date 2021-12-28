@@ -10,7 +10,7 @@ object Problem2 extends Solver("08", 61229):
 
     val decryptedNumbers = parsed.map((signalPatterns, output) =>
 
-      val letters = scala.collection.mutable.Map[Int, Set[Char]]()
+      val letters = scala.collection.mutable.Map.empty[Int, Set[Char]]
       val fives = signalPatterns.filter(_.size == 5).map(_.toSet)
       val sixes = signalPatterns.filter(_.size == 6).map(_.toSet)
 

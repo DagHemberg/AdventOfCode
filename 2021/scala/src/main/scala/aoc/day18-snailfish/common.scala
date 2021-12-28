@@ -1,30 +1,30 @@
 package aoc.day18
 import aoc.utils.*
 
-extension (br: Branch) 
-  def red: Branch = 
+extension (branch: Branch) 
+  def reduce: Branch = 
     import Operation.*
-    br.determineAction match
-      case Neither   => br
-      case Splitting => br.firstSpl match
-        case Some(leaf) => br
+    branch.determineAction match
+      case Neither   => branch
+      case Splitting => branch.firstSpl match
+        case Some(leaf) => branch
           .updated(leaf.index, leaf.split)
           .refresh
-          .red
-        case None => br
-      case Exploding => br.firstExp match
-        case Some(bruh) => 
-          val l: Leaf = bruh.left.asInstanceOf[Leaf]
-          val r: Leaf = bruh.right.asInstanceOf[Leaf]
-          val bef = br.leafAt(l.index - 1).getOrElse(l)
-          val aft = br.leafAt(r.index + 1).getOrElse(r)
-          br
+          .reduce
+        case None => branch
+      case Exploding => branch.firstExp match
+        case Some(brunch) => 
+          val l: Leaf = brunch.left.asInstanceOf[Leaf]
+          val r: Leaf = brunch.right.asInstanceOf[Leaf]
+          val bef = branch.leafAt(l.index - 1).getOrElse(l)
+          val aft = branch.leafAt(r.index + 1).getOrElse(r)
+          branch
             .updated(l.index - 1, Leaf(bef.value + l.value))
             .updated(r.index + 1, Leaf(aft.value + r.value))
             .removeExplodedNode(l.index, r.index)
             .refresh
-            .red
-        case None => br
+            .reduce
+        case None => branch
 
 extension (str: String)
   def addIndex = 
@@ -68,10 +68,10 @@ case class Branch(left: Tree, right: Tree, depth: Int = 1) extends Tree:
     Branch(
       Branch(left, right), 
       Branch(other.left, other.right)
-    ).refresh.red
+    ).refresh.reduce
 
 case class Leaf(value: Int, depth: Int = 0, index: Int = 0) extends Tree:
-  override def toString = s"${value.toString}"
+  override def toString = value.toString
   def magnitude = value
   def split = if value >= 10 then 
     Branch(

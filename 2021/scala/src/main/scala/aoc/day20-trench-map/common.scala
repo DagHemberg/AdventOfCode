@@ -2,7 +2,6 @@ package aoc.day20
 import aoc.utils.*
 
 case class Image(pixels: Matrix[String], iteration: Int):
-  def apply(x: Int, y: Int): String = pixels(x, y)
   def apply(i: Index): String = pixels(i)
   val (height, width) = pixels.size
   def countLit = pixels.count(_ == "#")
@@ -26,7 +25,8 @@ extension (img: Image)
     
     algorithm(BigInt(bin, 2).toString(10).toInt).toString
   
-  def enhance(using algorithm: String) = Image(Matrix
-    (img.height + 2, img.width + 2)
-    ((r, c) => Index(r - 1, c - 1))
-    .map(img.decode(_)), img.iteration + 1)
+  def enhance(using algorithm: String) = Image(
+    Matrix
+      (img.height + 2, img.width + 2)
+      ((r, c) => Index(r - 1, c - 1))
+    .map(img.decode), img.iteration + 1)

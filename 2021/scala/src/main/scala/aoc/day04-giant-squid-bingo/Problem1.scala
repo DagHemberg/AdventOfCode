@@ -5,8 +5,8 @@ object Problem1 extends Solver("04", 4512):
   def name = "Giant Squid Bingo - Part 1"
   def solve(data: Vector[String]) = 
     given Vector[String] = data
-    var boards = parsed
     var numbers = data.head.split(",").toVector.map(_.toInt)
+    var boards = parsed
 
     var i = 0    
     while !boards.exists(_.hasWon) do

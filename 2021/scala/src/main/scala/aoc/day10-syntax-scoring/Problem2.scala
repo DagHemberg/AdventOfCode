@@ -9,7 +9,7 @@ object Problem2 extends Solver("10", 288957L):
     .map(str => str
       .filtered
       .reverse
-      .map(c => parens(c.toString))
+      .map(parens)
       .foldLeft(0L)((sum, paren) => 5 * sum + incompleteValue(paren)))
     .middle
     

@@ -13,8 +13,16 @@ package object utils:
       println(s"[${YELLOW}*${RESET}] $a")
       a
     
-    def log = 
-      println(s"[${CYAN}*${RESET}] $a")
+    def log(color: String = "cyan") =
+      val col = color.toLowerCase match
+        case "cyan" => CYAN
+        case "red" => RED
+        case "green" => GREEN
+        case "yellow" => YELLOW
+        case "blue" => BLUE
+        case "magenta" => MAGENTA
+        case _ => CYAN
+      println(s"[${col}+${RESET}] $a")
       a
 
     def logAttr[B](f: A => B) = 
@@ -25,9 +33,11 @@ package object utils:
       if f(a) then println(s"[${RED}!${RESET}] $a")
       a
 
+  extension [A](xs: IndexedSeq[A])
+    def middle(implicit ord: Ordering[A]) = xs.sorted.apply(xs.size / 2)
+
   extension [A: Numeric](xs: Vector[A])
     def average = xs.sum.toDouble / xs.size
-    def middle = xs.sorted.apply(xs.size / 2)
 
     infix def dot (ys: Vector[A]) = 
       require(xs.size == ys.size, "Vectors must be the same size")
@@ -41,8 +51,8 @@ package object utils:
         xs(0) * ys(1) - xs(1) * ys(0)
       )
 
-    def len = math.sqrt((xs dot xs).toDouble)
-    def normalized = xs.map(_.toDouble * (1.0 / xs.len))
+    def magnitude = math.sqrt((xs dot xs).toDouble)
+    def normalized = xs.map(_.toDouble * (1.0 / xs.magnitude))
 
   // small case classes
   case class Pos(x: Int, y: Int):

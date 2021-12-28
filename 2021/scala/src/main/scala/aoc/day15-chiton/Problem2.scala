@@ -1,6 +1,5 @@
 package aoc.day15
 import aoc.utils.*
-import scala.collection.mutable as mutable
 
 object Problem2 extends Solver("15", 315):
   def name = "Chiton - Part 2"

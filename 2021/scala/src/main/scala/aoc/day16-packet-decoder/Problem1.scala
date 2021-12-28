@@ -8,9 +8,8 @@ object Problem1 extends Solver("16", 227L):
     val packetStrings = data.map(generateBinaryString)
 
     // we only care about the packet version here, so the 
-    // value can be set to 1 for all non-version-4-packets
-    def packetTypeOperation(i: Long, lb: ListBuffer[Packet]) = 1L
-    given ((Long, ListBuffer[Packet]) => Long) = packetTypeOperation
+    // value can be set to 0 for all non-version-4-packets
+    given ((Long, ListBuffer[Packet]) => Long) = (_, _) => 0L
 
     val packets = packetStrings.map(generatePacket)
 

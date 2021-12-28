@@ -5,10 +5,10 @@ object Problem2 extends Solver("04", 1924):
   def name = "Giant Squid Bingo - Part 2"
   def solve(data: Vector[String]) = 
     given Vector[String] = data
-    var boards = parsed
     val numbers = data.head.split(",").toVector.map(_.toInt)
+    var boards = parsed
 
-    val winners = scala.collection.mutable.ListBuffer[(Board, Int)]()
+    val winners = scala.collection.mutable.ListBuffer.empty[(Board, Int)]
     for i <- numbers do
       boards = boards.map(_.update(i))
       val b = boards.filter(_.hasWon)

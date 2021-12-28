@@ -8,7 +8,6 @@ object Problem1 extends Solver("10", 26397L):
     .filter(_.isCorrupt)
     .map(str => str
       .filtered
-      .find(paren => parens.values.toSet(paren.toString)).get // find first closing paren
-      .toString)
+      .find(parens.values.toSet).get) // find first closing paren
     .map(corruptValue)
     .sum
