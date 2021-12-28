@@ -41,7 +41,6 @@ object Problem1 extends Solver("25", 58):
 
     def step = cucumbers.stepRight.stepDown
 
-  
   def solve(data: Vector[String]) =
     var cucumbers = data.map(_.split("").toVector).toMatrix.map(Cucumber.from)
     var steps = 1
