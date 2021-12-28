@@ -17,8 +17,8 @@ package object utils:
       println(s"[${CYAN}*${RESET}] $a")
       a
 
-    def logattr[B](f: A => B) = 
-      println(s"[${CYAN}*${RESET}] $f($a)")
+    def logAttr[B](f: A => B) = 
+      println(s"[${CYAN}*${RESET}] ${f(a)}")
       a
 
     def warn(f: A => Boolean) = 
