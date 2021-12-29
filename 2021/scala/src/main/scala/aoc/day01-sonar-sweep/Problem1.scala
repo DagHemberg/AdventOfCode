@@ -6,5 +6,4 @@ object Problem1 extends Solver("01", 7):
   def solve(data: Vector[String]) = data
     .map(_.toInt)
     .sliding(2)
-    .filter(x => x.head < x.last)
-    .size
+    .count(x => x.head < x.last)
