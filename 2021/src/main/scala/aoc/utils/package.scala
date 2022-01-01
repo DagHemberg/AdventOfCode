@@ -26,7 +26,7 @@ package object utils:
       a
 
     def logAttr[B](f: A => B) = 
-      println(s"[${CYAN}*${RESET}] ${f(a)}")
+      println(s"[${CYAN}+${RESET}] ${f(a)}")
       a
 
     def warn(f: A => Boolean) = 
