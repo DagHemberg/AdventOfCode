@@ -19,7 +19,7 @@ object Problem2 extends Solver("13", "See above"):
     val textWidth = (folded.maxBy(_.x).x + 1)
     s"""|┌─${Vector.fill(textWidth * 2)("─").mkString}─┐
         |$text
-    |    └─${Vector.fill(textWidth * 2)("─").mkString}─┘""".stripMargin.log
+    |    └─${Vector.fill(textWidth * 2)("─").mkString}─┘""".stripMargin.log()
 
     // theres no actual checkable expected output for the example 
     // here, so we have to manually make it pass the check
