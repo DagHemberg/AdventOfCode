@@ -1,14 +1,13 @@
 package aoc.day19
 import aoc.utils.*
+import Matrix.*
 
-case class Pos3D(x: Int, y: Int, z: Int): 
-  override def toString = s"($x,$y,$z)"
-  def toVector = Vector(x, y, z)
-  def +(p: Pos3D) = Pos3D(x + p.x, y + p.y, z + p.z)
-  def -(p: Pos3D) = Pos3D(x - p.x, y - p.y, z - p.z)
-  def distance(p: Pos3D) = (x - p.x).abs + (y - p.y).abs + (z - p.z).abs
-
-extension (vs: Vector[Int]) def toPos3D = Pos3D(vs(0), vs(1), vs(2))
+def rotations(inVec: Vector[Int]): Vector[Pos3D] = 
+  val fullRot = Vector(0, 90, 180, 270).map(_.toDouble)
+  val vec = inVec.map(_.toDouble)
+  (fullRot.flatMap(x => fullRot.map(z => rotate3DZ(z) * rotate3DX(x) * vec)) ++ 
+  fullRot.map(rotate3DZ(_) * rotate3DY(90) * vec) ++
+  fullRot.map(rotate3DZ(_) * rotate3DY(270) * vec)).map(_.toPos3D)
 
 case class Scanner(pos: Pos3D, beacons: Seq[Pos3D]):
   override def toString = s"\n--- Scanner at $pos ---\n${beacons.mkString("\n")}\n"
@@ -23,7 +22,7 @@ case class Scanner(pos: Pos3D, beacons: Seq[Pos3D]):
 
   def overlaps(other: Scanner) = (beacons intersect other.beacons).size >= 12
 
-def align(s1: Scanner, s2: Scanner): Option[(Pos3D, Scanner)] =
+def aligned(s1: Scanner, s2: Scanner): Option[(Pos3D, Scanner)] =
   val ps = s1.beacons
   var found = false
   var i = 0
@@ -46,7 +45,7 @@ def alignScanners(found: Seq[Scanner], remaining: Seq[Scanner]): Seq[Scanner] =
   if remaining.isEmpty then found
   else 
     val thicc = Scanner(Pos3D(0, 0, 0), found.map(_.beacons.toSet).reduce(_ union _).toSeq)
-    align(thicc, remaining.head) match
+    aligned(thicc, remaining.head) match
       case Some((p, s)) => alignScanners(found.map(_.updatedOrigin(p)) :+ s, remaining.tail)
       case None => alignScanners(found, remaining.tail :+ remaining.head)
 

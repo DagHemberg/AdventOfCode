@@ -109,3 +109,32 @@ case class Matrix[A](input: Vector[Vector[A]]):
 object Matrix:
   def apply[A](height: Int, width: Int)(f: (Int, Int) => A): Matrix[A] = 
     Matrix((0 until height).toVector.map(row => (0 until width).toVector.map(col => f(row, col))))
+
+  def identity(size: Int): Matrix[Int] = 
+    Matrix(size, size)((row, col) => if row == col then 1 else 0)
+
+  private def sinD(x: Double) = math.sin(math.toRadians(x))
+  private def cosD(x: Double) = math.cos(math.toRadians(x))
+
+  def rotate2D(rad: Double) = Vector(
+      Vector(cosD(rad), -sinD(rad)), 
+      Vector(sinD(rad), cosD(rad))
+    ).toMatrix
+
+  def rotate3DX(a: Double) = Vector(
+    Vector(1.0, 0.0,      0.0),
+    Vector(0,   cosD(a),  -sinD(a)),
+    Vector(0,   sinD(a),  cosD(a))
+  ).toMatrix
+
+  def rotate3DY(a: Double) = Vector(
+    Vector(cosD(a),  0,   sinD(a)),
+    Vector(0.0,      1.0, 0.0),
+    Vector(-sinD(a), 0,   cosD(a))
+  ).toMatrix
+
+  def rotate3DZ(a: Double) = Vector(
+    Vector(cosD(a), -sinD(a), 0),
+    Vector(sinD(a), cosD(a),  0),
+    Vector(0.0,     0.0,      1.0)
+  ).toMatrix

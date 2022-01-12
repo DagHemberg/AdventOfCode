@@ -1,7 +1,4 @@
 package aoc
-// turns out it just prints "a"
-// maybe i should've thought of that
-// import com.github.dwickern.macros.NameOf.* 
 import math.Numeric.Implicits.infixNumericOps
 import Console.*
 
@@ -38,6 +35,10 @@ package object utils:
 
   extension [A: Numeric](xs: Vector[A])
     def average = xs.sum.toDouble / xs.size
+    def toPos3D = 
+      require(xs.size == 3, s"Vector must have 3 elements, but has ${xs.size}")
+      val xd = xs.map(_.toDouble.round.toInt)
+      Pos3D(xd(0), xd(1), xd(2))
 
     infix def dot (ys: Vector[A]) = 
       require(xs.size == ys.size, "Vectors must be the same size")
@@ -56,13 +57,25 @@ package object utils:
 
   // small case classes
   case class Pos(x: Int, y: Int):
+    override def toString = s"($x,$y)"
     def transpose = Pos(y, x)
     def tuple = (x, y)
     def +(p: Pos) = Pos(x + p.x, y + p.y)
     def +(p: (Int, Int)) = Pos(x + p._1, y + p._2)
     def -(p: Pos) = Pos(x - p.x, y - p.y)
     def -(p: (Int, Int)) = Pos(x - p._1, y - p._2)
+    def manhattan(p: Pos) = (x - p.x).abs + (y - p.y).abs
     
+  case class Pos3D(x: Int, y: Int, z: Int):
+    override def toString = s"($x,$y,$z)"
+    def tuple = (x, y, z)
+    def toVector = Vector(x, y, z)
+    def +(p: Pos3D) = Pos3D(x + p.x, y + p.y, z + p.z)
+    def +(p: (Int, Int, Int)) = Pos3D(x + p._1, y + p._2, z + p._3)
+    def -(p: Pos3D) = Pos3D(x - p.x, y - p.y, z - p.z)
+    def -(p: (Int, Int, Int)) = Pos3D(x - p._1, y - p._2, z - p._3)
+    def manhattan(p: Pos3D) = (x - p.x).abs + (y - p.y).abs + (z - p.z).abs
+
   case class Line(start: Pos, end: Pos)
 
   case class TimedEval[A](duration: Double, result: A)

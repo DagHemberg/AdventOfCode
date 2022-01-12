@@ -45,11 +45,9 @@ abstract class Solver[A](day: String, expectedExampleSolution: A) extends App:
   val testInput = readFile("examples", s"$day.txt")
   val puzzleInput = readFile("puzzles", s"$day.txt")
 
-  if Vector(testInput, puzzleInput).exists(_.size == 0) then System.exit(1)
-
   println(info("Evaluating example input..."))
 
-  private val exampleEval = Try(time(solve(testInput))) match
+  val exampleEval = Try {require(testInput.size != 0); time(solve(testInput))} match
     case Success(eval) => Some(eval)
     case Failure(e) =>
       println(s"""|${error("when solving the example problem:")}
@@ -64,7 +62,7 @@ abstract class Solver[A](day: String, expectedExampleSolution: A) extends App:
                     |    Time: ${exampleEval.duration}%2.6f s%n""".stripMargin)
 
         println(info("Evaluating puzzle input..."))
-        Try(time(solve(puzzleInput))) match
+        Try {require(testInput.size != 0); time(solve(puzzleInput))} match
           case Success(eval) =>
             println(f"""|${success("Solution found!")}
                         |    Output: ${YELLOW}${eval.result}${RESET}

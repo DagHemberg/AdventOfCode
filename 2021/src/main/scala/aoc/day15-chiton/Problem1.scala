@@ -6,6 +6,8 @@ object Problem1 extends Solver("15", 40):
 
   def solve(data: Vector[String]) =         
     val caves = data.map(_.split("").toVector.map(_.toInt)).toMatrix
-    given Matrix[Int] = caves
 
-    path.map(caves.apply).sum
+    Pathfinder(graph(caves), Index(0, 0), Index(caves.width - 1, caves.height - 1))
+      .path
+      .map(_.cost.toInt)
+      .getOrElse(0)
