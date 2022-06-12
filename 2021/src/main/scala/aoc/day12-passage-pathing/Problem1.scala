@@ -7,7 +7,7 @@ object Problem1 extends Solver("12", 226):
     given Vector[Cave] = data
     val connectedTo = data.caves.connections
     
-    def allPaths(currentCave: Cave, visited: Set[Cave], path: Path): Set[Path] =       
+    def allPaths(currentCave: Cave, visited: Set[Cave], path: CavePath): Set[CavePath] =       
       val newVisited = if currentCave.isSmall then visited + currentCave else visited
         
       if currentCave == "end" then Set(path)

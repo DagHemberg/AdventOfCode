@@ -7,7 +7,7 @@ object Problem1 extends Solver("15", 40):
   def solve(data: Vector[String]) =         
     val caves = data.map(_.split("").toVector.map(_.toInt)).toMatrix
 
-    Pathfinder(graph(caves), Index(0, 0), Index(caves.width - 1, caves.height - 1))
-      .path
+    Pathfinder(graphFrom(caves), Index(0, 0), Index(caves.width - 1, caves.height - 1))
+      .shortestPath
       .map(_.cost.toInt)
       .getOrElse(0)

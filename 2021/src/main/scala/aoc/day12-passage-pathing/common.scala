@@ -1,7 +1,7 @@
 package aoc.day12
 
 type Cave = String
-type Path = Vector[Cave]
+type CavePath = Vector[Cave]
 
 extension (data: Vector[String])
   def caves = data

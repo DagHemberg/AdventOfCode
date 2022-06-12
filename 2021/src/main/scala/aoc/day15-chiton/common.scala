@@ -6,7 +6,7 @@ extension (mat: Matrix[Int])
   def surrounding(i: Index) =
     Set(i.up, i.down, i.left, i.right).filterNot(mat.indexOutsideBounds)
 
-def graph(caves: Matrix[Int]) = caves
+def graphFrom(caves: Matrix[Int]) = caves
   .indices
   .toVector
   .flatten

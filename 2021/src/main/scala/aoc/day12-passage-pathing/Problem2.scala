@@ -7,7 +7,7 @@ object Problem2 extends Solver("12", 3509):
     given Vector[Cave] = data
     val connectedTo = data.caves.connections
 
-    def allPaths(currentCave: Cave, visited: Set[Cave], path: Path): Set[Path] =
+    def allPaths(currentCave: Cave, visited: Set[Cave], path: CavePath): Set[CavePath] =
       val newVisited = if currentCave.isSmall then visited + currentCave else visited
       val possibleNewCaves =
         if path.filter(_.isSmall).exists(cave => path.count(_ == cave) == 2) then Set.empty[Cave]
