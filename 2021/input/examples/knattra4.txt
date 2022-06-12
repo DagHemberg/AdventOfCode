@@ -1,0 +1,37 @@
+{
+  "start_node": 1,
+  "finish_node": 4,
+  "nodes": [
+    {
+      "id": 1,
+      "edges": [
+        {
+          "destination_node": 2,
+          "time_spent": 4
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "edges": [
+        {
+          "destination_node": 3,
+          "time_spent": 5
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "edges": [
+        {
+          "destination_node": 4,
+          "time_spent": 6
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "edges": []
+    }
+  ]
+}

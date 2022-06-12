@@ -1,40 +1,44 @@
 package aoc.utils
 
-case class Edge[N](from: N, to: N, cost: Double):
+type Cost = Double
+object Cost:
+  def MaxValue: Cost = Double.MaxValue
+
+case class Edge[N](from: N, to: N, cost: Cost):
   override  def toString = s"$from -> $to @ $cost"
-case class Path[N](nodes: Seq[N], cost: Double):
-  override def toString = s"[${nodes.mkString(" -> ")}]: $cost"
 
-case class Pathfinder[N](graph: Set[Edge[N]], start: N, end: N, heuristic: N => Double = (n: N) => 0):
+case class Path[N](nodes: Seq[N], cost: Cost):
+  override def toString = s"[${nodes.mkString(" -> ")}] @ $cost"
+
+case class Pathfinder[N](graph: Set[Edge[N]], start: N, end: N, heuristic: N => Cost = (n: N) => 0):
   import scala.collection.mutable as mutable
-  private case class Cost[A](node: A, cost: Double)
-  private def nodeOrder = new Ordering[Cost[N]]:
-    def compare(a: Cost[N], b: Cost[N]) = b.cost compare a.cost
+  private case class CostNode(node: N, cost: Cost)
+  private def nodeOrder = new Ordering[CostNode]:
+    def compare(a: CostNode, b: CostNode) = b.cost compare a.cost
 
-  private def shortestPath =
-    val edges = graph.groupBy(_.from)
-    val q = mutable.PriorityQueue(Cost(start, 0))(nodeOrder)
-    val prev = mutable.Map.empty[N, N]
-    val dist = mutable.Map.empty[N, Double] withDefaultValue Double.MaxValue    
-    dist(start) = 0    
+  def shortestPath =
+    val neighbours = graph.groupBy(_.from) withDefaultValue Set.empty
+    val queue = mutable.PriorityQueue((start, 0d))(Ordering.by((a, b) => -b))
+    val previous = mutable.Map.empty[N, N]
+    val distance = mutable.Map.empty[N, Double] withDefaultValue Double.MaxValue    
+    distance(start) = 0
 
     var found = false
-    while !found && q.nonEmpty do
-      val min = q.dequeue.node
+    while !found && queue.nonEmpty do
+      val (min, _) = queue.dequeue
 
       if min == end then found = true
-      else for edge <- edges(min) do
-        val alt = dist(min) + edge.cost
-        if alt < dist(edge.to) then
-          q.enqueue(Cost(edge.to, alt + heuristic(edge.to)))
-          dist(edge.to) = alt
-          prev(edge.to) = min
+      else for edge <- neighbours(min) do
+        val alt = distance(min) + edge.cost
+        val destination = edge.to
+        if alt < distance(destination) then
+          queue.enqueue((destination, alt + heuristic(destination)))
+          distance(destination) = alt
+          previous(destination) = min
 
-    def backtrack(curr: N): Vector[N] =
-      if prev(curr) == start then Vector(start, curr)
-      else backtrack(prev(curr)) :+ curr
+    def backtrack(current: N): Vector[N] =
+      if previous(current) == start then Vector(start, current)
+      else backtrack(previous(current)) :+ current
 
-    if found then Some(Path(backtrack(end), dist(end))) 
+    if found then Some(Path(backtrack(end), distance(end))) 
     else None
-
-  lazy val path = shortestPath
