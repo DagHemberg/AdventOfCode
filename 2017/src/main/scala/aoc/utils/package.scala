@@ -99,6 +99,7 @@ package object utils:
 
   extension (str: String)
     def words = str.split("\\s+").toList
+    def padLeftTo(n: Int, char: Char) = str.reverse.padTo(n, char).reverse
 
   extension (tup: (Int, Int))
     def transpose = (tup._2, tup._1)
