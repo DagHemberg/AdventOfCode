@@ -138,7 +138,10 @@ package object utils:
 
     def distance(p: Pos) = math.sqrt(math.pow((x - p.x), 2) + math.pow((y - p.y), 2))
     def manhattan(p: Pos) = math.abs(x - p.x) + math.abs(y - p.y)
-    
+
+  object Pos:
+    def apply(tup: (Int, Int)): Pos = Pos(tup._1, tup._2)
+
   /** Represents a position in 3D space */
   case class Pos3D(x: Int, y: Int, z: Int):
     def tuple = (x, y, z)
@@ -153,6 +156,9 @@ package object utils:
       diff(p).toVector.magnitude
     def manhattan(p: Pos3D) = 
       diff(p).map(math.abs).sum
+  
+  object Pos3D:
+    def apply(tup: (Int, Int, Int)): Pos3D = Pos3D(tup._1, tup._2, tup._3)
 
   case class Line(start: Pos, end: Pos)
   case class Line3D(start: Pos3D, end: Pos3D)
