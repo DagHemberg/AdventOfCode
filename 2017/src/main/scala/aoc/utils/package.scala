@@ -100,8 +100,10 @@ package object utils:
   extension (str: String)
     def words = str.split("\\s+").toList
     def padLeftTo(n: Int, char: Char) = str.reverse.padTo(n, char).reverse
-    def findAllWith(regex: String) = regex.r.findAllIn(str).toList
+    def findAllWith(regex: String) = regex.r.findAllMatchIn(str).toList
+    def findAllMatchWith(regex: String) = regex.r.findAllMatchIn(str).toList
     def findWith(regex: String) = regex.r.findFirstIn(str)
+    def findMatchWith(regex: String) = regex.r.findFirstMatchIn(str)
 
   extension (tup: (Int, Int))
     def transpose = (tup._2, tup._1)
