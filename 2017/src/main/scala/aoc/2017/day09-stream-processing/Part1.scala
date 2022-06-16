@@ -12,11 +12,9 @@ object Part1 extends Problem("2017", "09", "1")(51):
     )
     
     def score(str: String) = 
-      val (tot, _) = str.foldLeft((0, 1)) { case ((total, depth), c) =>
-        c match
-          case '{' => (total + depth, depth + 1)
-          case '}' => (total, depth - 1)
-      }
-      tot
+      str.foldLeft((0, 1)) { case ((total, depth), c) => c match
+        case '{' => (total + depth, depth + 1)
+        case '}' => (total, depth - 1)
+      }.head
 
     groups.map(score).sum
