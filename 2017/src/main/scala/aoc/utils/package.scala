@@ -44,9 +44,9 @@ package object utils:
       println(s"[${col}+${RESET}] $a")
       a
 
-    /** Uses a [[scala.collection.immutable.LazyList]] to apply any function `A => A` on any object `n` times. Easily curry-able due to usage of multiple parameter lists. */
-    def iterate(f: A => A)(n: Int): A = 
-      LazyList.iterate(a)(f)(n)
+    /** Uses a [[scala.collection.immutable.LazyList]] to apply any function `A => A` on any object `n` times. */
+    def iterate(f: A => A): LazyList[A] = 
+      LazyList.iterate(a)(f)
 
     /** Recursively applies a function `f: A => A` on any object `a` until the predicate `p` is satisfied.
      */
