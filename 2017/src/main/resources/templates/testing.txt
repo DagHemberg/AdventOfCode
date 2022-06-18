@@ -1,0 +1,7 @@
+import aoc.utils.*
+def read(folder: String) = 
+  os.read.lines(os.pwd / "src" / "main" / "resources" / "input" / folder / "@YEAR" / "@DAY.txt").toList
+val testData = read("examples")
+val realData = read("puzzles")
+val data = testData
+
