@@ -120,15 +120,15 @@ package object utils:
     def dl = (tup.row + 1, tup.col - 1)
     def dr = (tup.row + 1, tup.col + 1)
 
-    def neighbors: List[(Int, Int)] = List(tup.up, tup.down, tup.left, tup.right, tup.ul, tup.ur, tup.dl, tup.dr)
+    def neighbours: List[(Int, Int)] = List(tup.up, tup.down, tup.left, tup.right, tup.ul, tup.ur, tup.dl, tup.dr)
     def neighboursOrth = List(tup.up, tup.left, tup.right, tup.down)
     def neighboursDiag = List(tup.ul, tup.ur, tup.dl, tup.dr)
 
     private def outsideFilter[A](list: List[(Int, Int)])(using mat: Matrix[A]) = 
-      tup.neighbors filterNot mat.indexOutsideBounds map mat.apply
+      list filterNot mat.indexOutsideBounds map mat.apply
 
-    def neighborsIn[A](using mat: Matrix[A]) = tup.outsideFilter(tup.neighbors)
-    def neighborsOrthIn[A](using mat: Matrix[A]) = tup.outsideFilter(tup.neighboursOrth)
+    def neighboursIn[A](using mat: Matrix[A]) = tup.outsideFilter(tup.neighbours)
+    def neighboursOrthIn[A](using mat: Matrix[A]) = tup.outsideFilter(tup.neighboursOrth)
     def neighboursDiagIn[A](using mat: Matrix[A]) = tup.outsideFilter(tup.neighboursDiag)
 
   /** Represents a position in 2D space */
@@ -179,3 +179,5 @@ package object utils:
       val result = block
       val duration = (System.nanoTime() - start) / 1E9
       TimedEval(duration, result)
+
+    def logTime[A](block: => A) = time(block).logAttr(_.duration).result

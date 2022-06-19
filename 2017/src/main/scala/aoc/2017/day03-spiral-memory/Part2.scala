@@ -1,6 +1,5 @@
 package aoc.y2017.day03
 import aoc.utils.*
-import collection.mutable as mutable
 
 object Part2 extends Problem("2017", "03", "2")(1968):
   def name = "Spiral Memory - Part 2"
@@ -10,6 +9,6 @@ object Part2 extends Problem("2017", "03", "2")(1968):
 
     val (n: Int, values: Map[(Int, Int), Int]) = (1, init).doUntil
       ((i, m) => m(spiralPos(i)) > num)
-      ((i, m) => (i + 1, m + (spiralPos(i+1) -> spiralPos(i+1).neighbors.flatMap(m.get).sum)))
+      ((i, m) => (i + 1, m + (spiralPos(i+1) -> spiralPos(i+1).neighbours.flatMap(m.get).sum)))
     
     values apply spiralPos(n)
