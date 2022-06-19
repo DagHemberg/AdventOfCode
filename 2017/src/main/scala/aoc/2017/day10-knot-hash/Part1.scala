@@ -6,6 +6,6 @@ object Part1 extends Problem("2017", "10", "1")(2):
   def solve(data: Seq[String]) =
     val lengths = data.head.split(",").map(_.toInt).toList
     
-    hash(lengths)
+    twist(lengths)
       .take(2)
       .reduce(_ * _)
