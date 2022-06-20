@@ -15,9 +15,9 @@ package object day16:
       val (a, b) = str(i) -> str(j)
       str.updated(i, b).updated(j, a)
 
-    def dance(using inst: Seq[String]) = inst.foldLeft(str) { (programs, instruction) =>
-      instruction match
-        case s"s$n"    => programs.spin(n.toInt)
-        case s"x$a/$b" => programs.exchange(a.toInt, b.toInt)
-        case s"p$a/$b" => programs.partner(a.head, b.head)
-    }
+    def dance(using instructions: Seq[String]) = 
+      instructions.foldLeft(str)((ps, inst) => inst match
+        case s"s$n"    => ps.spin(n.toInt)
+        case s"x$a/$b" => ps.exchange(a.toInt, b.toInt)
+        case s"p$a/$b" => ps.partner(a.head, b.head)
+      )

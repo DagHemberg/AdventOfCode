@@ -12,4 +12,4 @@ object Part2 extends Problem("2017", "16", "2")("ghidjklmnopabcef"):
       ((seen, str) => (seen + 1, str.dance))
       .head
     
-    programs.doFor(1e9 % cycles)(_.dance)
+    programs.iterate(_.dance)(1_000_000_000 % cycles)
