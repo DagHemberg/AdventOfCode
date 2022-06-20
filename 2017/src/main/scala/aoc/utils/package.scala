@@ -54,10 +54,6 @@ package object utils:
       if p(a) then a
       else f(a).doUntil(p)(f)
 
-    def doFor[B: Numeric](n: B)(f: A => A): A = 
-      if n.toLong <= 0 then a
-      else f(a).doFor(n.toLong-1)(f)
-
     /** Recursively applies a function `f: A => A` on any object `a` until `f(a)` is equal to `a`. Shorthand for `doUntil(_ == f(a))(f)`.
      */
     def converge(f: A => A): A = a.doUntil(x => x == f(x))(f)
