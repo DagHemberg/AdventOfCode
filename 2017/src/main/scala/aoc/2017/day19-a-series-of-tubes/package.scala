@@ -2,8 +2,6 @@ package aoc.y2017
 import aoc.utils.*
 
 package object day19:
-  def get(using grid: Matrix[(Char, (Int, Int))]) = grid.apply.tupled
-
   enum Direction:
     case Up, Down, Left, Right
     def opposite = this match
@@ -14,37 +12,38 @@ package object day19:
 
   import Direction.*
 
+  def get(using grid: Matrix[(Char, (Int, Int))]) = grid.apply.tupled
+
   def step(i: (Int, Int), dir: Direction) = dir match
     case Up    => i.up
     case Down  => i.down
     case Left  => i.left
     case Right => i.right
 
-  def next(index: (Int, Int), dir: Direction)(using grid: Matrix[(Char, (Int, Int))]) =
-    val (r, c) = index
-    grid(r, c) match
-      case ('+', d) =>
-        val newPos = index.neighboursOrthIn
-          .filter(_._1 != ' ')
-          .filter(_ != get(step(index, dir.opposite)))
-          .head._2
-        val newDir = dir match
-          case Up | Down    => step(newPos, Left) match
-            case `index` => Right
-            case _ => Left
-          case Left | Right => step(newPos, Up) match
-            case `index` => Down
-            case _ => Up
-        (newPos, newDir)
-      case (c, d) => (step(index, dir), dir)
+  case class Packet(pos: (Int, Int), dir: Direction):
+    def move(using grid: Matrix[(Char, (Int, Int))]) =  
+      get(pos) match
+        case ('+', d) =>
+          val newPos = pos
+            .neighboursOrthIn
+            .filter(_._1 != ' ')
+            .filter(_ != get(step(pos, dir.opposite)))
+            .head._2
+          val newDir = dir match
+            case Up | Down    => step(newPos, Left) match
+              case `pos` => Right
+              case _ => Left
+            case Left | Right => step(newPos, Up) match
+              case `pos` => Down
+              case _ => Up
+          Packet(newPos, newDir)
+        case (c, _) => Packet(step(pos, dir), dir)
 
-  extension (pair: ((Int, Int), Direction)) 
-    def move(using Matrix[(Char, (Int, Int))]) = next.tupled(pair)
+  def first(using grid: Matrix[(Char, (Int, Int))]) = 
+    Packet(grid.row(0).find((c, _) => c == '|').map(_._2).get, Down)
 
-  def first(using grid: Matrix[(Char, (Int, Int))]) = grid.row(0).find((c, _) => c == '|').map(_._2).get  
-  
-  def path(using grid: Matrix[(Char, (Int, Int))]) = 
-    (List.empty[Char], (first, Direction.Down)).doUntil
-      { case (_, (i, _)) => get(i)._1 == ' ' }
-      { case (acc, (i, d)) => (get(i).head :: acc, (i, d).move) }
+  def path(using Matrix[(Char, (Int, Int))]) = 
+    (List.empty[Char], first).doUntil
+      ((_, packet) => get(packet.pos)._1 == ' ')
+      ((acc, packet) => (get(packet.pos).head :: acc, packet.move))
       .head.reverse.mkString
