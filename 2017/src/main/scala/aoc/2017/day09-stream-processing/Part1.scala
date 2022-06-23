@@ -1,6 +1,5 @@
 package aoc.y2017.day09
 import aoc.utils.*
-import collection.mutable.{ArrayBuffer, Stack}
 
 object Part1 extends Problem("2017", "09", "1")(51):
   def name = "Stream Processing - Part 1"
