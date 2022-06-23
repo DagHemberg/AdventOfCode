@@ -22,11 +22,11 @@ package object day19:
 
   case class Packet(pos: (Int, Int), dir: Direction):
     def move(using grid: Matrix[(Char, (Int, Int))]) =  
-      get(pos) match
-        case ('+', d) =>
+      get(pos).head match
+        case '+' =>
           val newPos = pos
             .neighboursOrthIn
-            .filter(_._1 != ' ')
+            .filter(_.head != ' ')
             .filter(_ != get(step(pos, dir.opposite)))
             .head._2
           val newDir = dir match
@@ -37,13 +37,13 @@ package object day19:
               case `pos` => Down
               case _ => Up
           Packet(newPos, newDir)
-        case (c, _) => Packet(step(pos, dir), dir)
+        case _ => Packet(step(pos, dir), dir)
 
   def first(using grid: Matrix[(Char, (Int, Int))]) = 
     Packet(grid.row(0).find((c, _) => c == '|').map(_._2).get, Down)
 
   def path(using Matrix[(Char, (Int, Int))]) = 
     (List.empty[Char], first).doUntil
-      ((_, packet) => get(packet.pos)._1 == ' ')
+      ((_, packet) => get(packet.pos).head == ' ')
       ((acc, packet) => (get(packet.pos).head :: acc, packet.move))
       .head.reverse.mkString
