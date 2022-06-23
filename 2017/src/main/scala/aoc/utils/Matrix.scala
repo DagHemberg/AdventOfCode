@@ -69,6 +69,8 @@ case class Matrix[A](input: Vector[Vector[A]]):
   def transpose = input.transpose.toMatrix
   def flipCols = input.map(_.reverse).toMatrix
   def flipRows = input.reverse.toMatrix
+  def rotateRight = transpose.flipCols
+  def rotateLeft = flipCols.transpose
 
   def swapRows(a: Int, b: Int) = 
     input.updated(a, input(b)).updated(b, input(a)).toMatrix
