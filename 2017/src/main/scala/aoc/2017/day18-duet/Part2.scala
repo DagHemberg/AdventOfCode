@@ -1,6 +1,6 @@
 package aoc.y2017.day18
 import aoc.utils.*
-import collection.mutable as mut
+import collection.mutable as mutable
 
 object Part2 extends Problem("2017", "18", "2")(1):
   def name = "Duet - Part 2"
@@ -9,13 +9,13 @@ object Part2 extends Problem("2017", "18", "2")(1):
       case 'A' => 'B'
       case 'B' => 'A'
 
-    val buffer = Map('A' -> mut.Queue[Long](), 'B' -> mut.Queue[Long]())
+    val buffer = Map('A' -> mutable.Queue.empty[Long], 'B' -> mutable.Queue.empty[Long])
     val registry = Map('A' -> extract(data), 'B' -> extract(data))
-    val counter = mut.Map('A' -> 0, 'B' -> 0)
-    val pc = mut.Map('A' -> 0L, 'B' -> 0L)
+    val counter = mutable.Map('A' -> 0, 'B' -> 0)
+    val pc = mutable.Map('A' -> 0L, 'B' -> 0L)
 
     def unpause(machine: Char): Unit = 
-      given mut.Map[String, Long] = registry(machine)
+      given mutable.Map[String, Long] = registry(machine)
       var paused = false
       val other = opposite(machine)
 
@@ -37,7 +37,7 @@ object Part2 extends Problem("2017", "18", "2")(1):
             str match
               case s"snd $r" => 
                 counter(machine) += 1
-                buffer(machine).append(get(r))
+                buffer(machine).enqueue(get(r))
               case s"set $r $v" => registry(machine)(r) = get(v)
               case s"add $r $v" => registry(machine)(r) += get(v)
               case s"mul $r $v" => registry(machine)(r) *= get(v)
