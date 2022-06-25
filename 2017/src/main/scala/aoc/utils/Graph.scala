@@ -1,5 +1,6 @@
 package aoc.utils
 import scala.collection.mutable as mutable
+import scala.annotation.targetName
 
 /** 
   * @param from the source vertex
@@ -11,7 +12,6 @@ case class Edge[V](u: V, v: V, weight: Double):
   lazy val reverse = Edge(v, u, weight)
   override  def toString = s"$u -> $v @ $weight"
 
-
 /** 
   * @param vertices the ordered sequence of vertices making up the path
   * @param cost the total cost of the path
@@ -21,9 +21,9 @@ case class Path[V](vertices: Seq[V], cost: Double):
   def ++(other: Path[V]) = Path(vertices ++ other.vertices, cost + other.cost)
   override def toString = s"[${vertices.mkString(" -> ")}] @ $cost"
 
-
 case class DisjointSet[A](nodes: A*):
   import collection.mutable as mutable
+  override def toString = parents.groupBy(_._2).map(_._2).toSet.mkString("[", ", ", "]")
   val parents = mutable.Map.empty[A, A]
   val rank = mutable.Map.empty[A, Int]
 
@@ -62,6 +62,7 @@ object DisjointSet:
   * @param adjacent a map from each vertex to a set of vertices adjacent to it
   */
 case class Graph[V](edges: Set[Edge[V]]):
+  import Graph.*
   val size = edges.size
   lazy val vertices = edges.flatMap(e => Seq(e.u, e.v))
   lazy val edgesFrom = edges.groupBy(_.from)
@@ -95,7 +96,22 @@ case class Graph[V](edges: Set[Edge[V]]):
   * @param heuristic an optional heuristic function `V => Double`
   * @return `Some[Path]` if such a path exists, `None` otherwise.
   */
-  def shortestPath(start: V, end: V, heuristic: V => Double = (v: V) => 0) =
+  def shortestPath(start: V, end: V, heuristic: V => Double = (v: V) => 0): Option[Path[V]] = 
+    given Map[V, Set[Edge[V]]] = edgesFrom
+    aStar(start, end, defaultAdjFunction, heuristic)
+
+object Graph:
+  def defaultHeuristic[V](v: V) = 0d
+  def defaultAdjFunction[V](v: V)(using edgesFrom: Map[V, Set[Edge[V]]]) = 
+    edgesFrom getOrElse (v, Set.empty)
+
+  def aStar[V](
+    start: V, 
+    end: V,
+    adjFunc: V => Set[Edge[V]], 
+    heuristic: V => Double = (v: V) => 0
+  ): Option[Path[V]] =
+  
     val pq = mutable.PriorityQueue((start, 0d))(Ordering.by((a, b) => -b))
     val prev = mutable.Map.empty[V, V]
     val dist = mutable.Map.empty[V, Double] withDefaultValue Double.PositiveInfinity
@@ -106,7 +122,7 @@ case class Graph[V](edges: Set[Edge[V]]):
       val (min, _) = pq.dequeue
 
       if min == end then found = true
-      else for edge <- edgesFrom getOrElse (min, Set.empty) do
+      else for edge <- adjFunc(min) do
         val alt = dist(min) + edge.weight
         val dest = edge.to
         if alt < dist(dest) then
