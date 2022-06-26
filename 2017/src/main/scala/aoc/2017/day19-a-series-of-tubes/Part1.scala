@@ -4,7 +4,7 @@ import aoc.utils.*
 object Part1 extends Problem("2017", "19", "1")("ABCDEF"):
   def name = "A Series of Tubes - Part 1"
   def solve(data: Seq[String]) =
-    given grid: Matrix[(Char, (Int, Int))] = data
+    given grid: Matrix[(Char, Pos2D)] = data
       .map(_.toVector)
       .toVector
       .toMatrix

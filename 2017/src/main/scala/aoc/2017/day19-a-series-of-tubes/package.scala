@@ -12,16 +12,16 @@ package object day19:
 
   import Direction.*
 
-  def get(using grid: Matrix[(Char, (Int, Int))]) = grid.apply.tupled
+  def get(using grid: Matrix[(Char, Pos2D)]) = grid.apply.tupled
 
-  def step(i: (Int, Int), dir: Direction) = dir match
+  def step(i: Pos2D, dir: Direction) = dir match
     case Up    => i.up
     case Down  => i.down
     case Left  => i.left
     case Right => i.right
 
-  case class Packet(pos: (Int, Int), dir: Direction):
-    def move(using grid: Matrix[(Char, (Int, Int))]) =  
+  case class Packet(pos: Pos2D, dir: Direction):
+    def move(using grid: Matrix[(Char, Pos2D)]) =  
       get(pos).head match
         case '+' =>
           val newPos = pos
@@ -39,10 +39,10 @@ package object day19:
           Packet(newPos, newDir)
         case _ => Packet(step(pos, dir), dir)
 
-  def first(using grid: Matrix[(Char, (Int, Int))]) = 
+  def first(using grid: Matrix[(Char, Pos2D)]) = 
     Packet(grid.row(0).find((c, _) => c == '|').map(_._2).get, Down)
 
-  def path(using Matrix[(Char, (Int, Int))]) = 
+  def path(using Matrix[(Char, Pos2D)]) = 
     (List.empty[Char], first).doUntil
       ((_, packet) => get(packet.pos).head == ' ')
       ((acc, packet) => (get(packet.pos).head :: acc, packet.move))

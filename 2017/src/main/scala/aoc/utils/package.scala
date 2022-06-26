@@ -5,6 +5,33 @@ import math.Fractional.Implicits.infixFractionalOps
 import Console.*
 
 package object utils:
+  type Pos2D = (Int, Int)
+  type Vec3 = (Int, Int, Int)
+
+  // WIP DIRECTION CLASS(ES)
+  // trait Cardinal(x: Int, y: Int):
+  //   def move(pos: Pos2D) = (pos.x + x, pos.y + y)
+
+  // trait Hex(q: Int, r: Int, s: Int):
+  //   def move(vec: Vec3) = (vec.q + q, vec.r + r, vec.s + s)
+
+  // enum Direction:
+  //   case North     extends Direction with Cardinal(0, -1) with Hex(0, -1, 1)
+  //   case NorthEast extends Direction with Cardinal(1, -1) with Hex(1, -1, 0)
+  //   case East      extends Direction with Cardinal(1, 0)
+  //   case SouthEast extends Direction with Cardinal(1, 1) with Hex(1, 0, -1) 
+  //   case South     extends Direction with Cardinal(0, 1) with Hex(0, 1, -1) 
+  //   case SouthWest extends Direction with Cardinal(-1, 1) with Hex(-1, 1, 0)
+  //   case West      extends Direction with Cardinal(-1, 0)
+  //   case NorthWest extends Direction with Cardinal(-1, -1) with Hex(-1, 0, 1)
+    
+  //   import Direction.*
+  //   def left = fromOrdinal(this.ordinal + 2 % 8)
+  //   def right = fromOrdinal(this.ordinal + 6 % 8)
+  //   def reverse = fromOrdinal(this.ordinal + 4 % 8)
+  //   def clockwise = fromOrdinal(this.ordinal + 1 % 8)
+  //   def counterclockwise = fromOrdinal(this.ordinal + 7 % 8)
+
   extension [A](a: A)
     /** Logs any object `a` in the console and then returns the object without modifying it. */
     def log = 
@@ -103,6 +130,7 @@ package object utils:
 
   extension (str: String)
     def words = str.split("\\s+").toList
+    def lines = str.split("\n").toList
     def padLeftTo(n: Int, char: Char) = str.reverse.padTo(n, char).reverse
     def findAllWith(regex: String) = regex.r.findAllIn(str).toList
     def findAllMatchWith(regex: String) = regex.r.findAllMatchIn(str).toList
@@ -112,12 +140,22 @@ package object utils:
   extension (b: Boolean)
     def toInt = if b then 1 else 0
 
-  extension (tup: (Int, Int))
+  // would put in Matrix.scala but the compiler complained
+  extension [A: Numeric](mat: Matrix[A])
+    def +(other: Matrix[A]): Matrix[A] = mat zip other map (_ + _)
+    def -(other: Matrix[A]): Matrix[A] = mat zip other map (_ - _)
+
+  extension (tup: Pos2D)
     def transpose = (tup._2, tup._1)
     
     def row = tup._1
     def col = tup._2
-        
+    def x = tup._1
+    def y = tup._2
+
+    def +(other: Pos2D) = (tup._1 + other._1, tup._2 + other._2)
+    def -(other: Pos2D) = (tup._1 - other._1, tup._2 - other._2)
+
     def up = (tup.row - 1, tup.col)
     def down = (tup.row + 1, tup.col)
     def left = (tup.row, tup.col - 1)
@@ -127,18 +165,40 @@ package object utils:
     def dl = (tup.row + 1, tup.col - 1)
     def dr = (tup.row + 1, tup.col + 1)
 
-    def neighbours: List[(Int, Int)] = List(tup.up, tup.down, tup.left, tup.right, tup.ul, tup.ur, tup.dl, tup.dr)
+    def neighbours: List[Pos2D] = List(tup.up, tup.down, tup.left, tup.right, tup.ul, tup.ur, tup.dl, tup.dr)
     def neighboursOrth = List(tup.up, tup.left, tup.right, tup.down)
     def neighboursDiag = List(tup.ul, tup.ur, tup.dl, tup.dr)
 
-    private def outsideFilter[A](list: List[(Int, Int)])(using mat: Matrix[A]) = 
+    private def outsideFilter[A](list: List[Pos2D])(using mat: Matrix[A]) = 
       list filterNot mat.indexOutsideBounds map mat.apply
 
     def neighboursIn[A](using mat: Matrix[A]) = tup.outsideFilter(tup.neighbours)
     def neighboursOrthIn[A](using mat: Matrix[A]) = tup.outsideFilter(tup.neighboursOrth)
     def neighboursDiagIn[A](using mat: Matrix[A]) = tup.outsideFilter(tup.neighboursDiag)
 
+    private def toVector = Vector(tup._1, tup._2)
+
+    def distance(other: Pos2D) = 
+      (tup - other).toVector.magnitude
+
+  extension (v: Vec3)
+    def x = v._1
+    def y = v._2
+    def z = v._3
+
+    def q = v._1
+    def r = v._2
+    def s = v._3
+
+    def toVector = Vector(v.x, v.y, v.z)
+    def +(other: Vec3) = (v.x + other.x, v.y + other.y, v.z + other.z)
+    def -(other: Vec3) = (v.x - other.x, v.y - other.y, v.z - other.z)
+
+    def distance(other: Vec3) = (v - other).toVector.magnitude
+    def manhattan(other: Vec3) = (v - other).toVector.map(math.abs).sum
+
   /** Represents a position in 2D space */
+  @deprecated("Use (Int, Int) / Pos2D instead", "0.2")
   case class Pos(x: Int, y: Int):
     /** Switches the x and y coordinates */
     def transpose = Pos(y, x)
@@ -151,9 +211,10 @@ package object utils:
     def manhattan(p: Pos) = math.abs(x - p.x) + math.abs(y - p.y)
 
   object Pos:
-    def apply(tup: (Int, Int)): Pos = Pos(tup._1, tup._2)
+    def apply(tup: Pos2D): Pos = Pos(tup._1, tup._2)
 
   /** Represents a position in 3D space */
+  @deprecated("Use (Int, Int, Int) / Vec3 instead", "0.2")
   case class Pos3D(x: Int, y: Int, z: Int):
     def tuple = (x, y, z)
     def toVector = Vector(x, y, z)
