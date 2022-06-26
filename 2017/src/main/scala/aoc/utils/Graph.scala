@@ -1,6 +1,5 @@
 package aoc.utils
 import scala.collection.mutable as mutable
-import scala.annotation.targetName
 
 /** 
   * @param from the source vertex
@@ -22,7 +21,6 @@ case class Path[V](vertices: Seq[V], cost: Double):
   override def toString = s"[${vertices.mkString(" -> ")}] @ $cost"
 
 case class DisjointSet[A](nodes: A*):
-  import collection.mutable as mutable
   override def toString = parents.groupBy(_._2).map(_._2).toSet.mkString("[", ", ", "]")
   val parents = mutable.Map.empty[A, A]
   val rank = mutable.Map.empty[A, Int]
