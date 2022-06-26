@@ -23,7 +23,7 @@ case class Matrix[A](input: Vector[Vector[A]]):
     else  
       def pad(vec: Vector[A]) = vec
         .zip(input.transpose.map(_.map(_.toString.size).max + 1))
-        .map((a, b) => a.toString.reverse.padTo(b, ' ').reverse)
+        .map((a, b) => a.toString.padLeftTo(b, ' '))
         .mkString
       
       s"\n⎛${pad(input.head)} ⎞${
@@ -32,7 +32,7 @@ case class Matrix[A](input: Vector[Vector[A]]):
       }\n⎝${pad(input.last)} ⎠"
 
   def apply(row: Int, col: Int): A = input(row)(col)
-  // def apply(index: Index): A = input(index.row)(index.col)
+  def apply(index: Pos2D): A = input(index.row)(index.col)
 
   def isSquare = height == width
 
@@ -45,12 +45,15 @@ case class Matrix[A](input: Vector[Vector[A]]):
   def cols = toVector.transpose
 
   def indices = 
-    (0 until height).toVector.map(row => (0 until width).toVector.map(col => (row, col))).toMatrix
+    (0 until height)
+      .toVector
+      .map(row => (0 until width).toVector.map(col => (row, col)))
+      .toMatrix
 
   def indexOutsideBounds(row: Int, col: Int): Boolean =
     0 > row || row >= height || 0 > col || col >= width
-  // def indexOutsideBounds(index: Index): Boolean = 
-  //   indexOutsideBounds(index.row, index.col)
+  def indexOutsideBounds(index: Pos2D): Boolean = 
+    indexOutsideBounds(index.row, index.col)
 
   def map[B](f: A => B) = input.map(_.map(f)).toMatrix
   def forEach(f: A => Unit) = input.foreach(_.foreach(f))
@@ -60,8 +63,8 @@ case class Matrix[A](input: Vector[Vector[A]]):
 
   def slice(row: Int, col: Int)(width: Int, height: Int): Matrix[A] = 
     input.slice(row, row + width).map(_.slice(col, col + height)).toMatrix
-  // def slice(index: Index)(width: Int, height: Int): Matrix[A] = 
-  //   slice(index.row, index.col)(width, height)
+  def slice(index: Pos2D)(width: Int, height: Int): Matrix[A] = 
+    slice(index.row, index.col)(width, height)
 
   def filterRow(f: Vector[A] => Boolean) = input.filter(f).toMatrix
   def filterCol(f: Vector[A] => Boolean) = transpose.filterRow(f).transpose
@@ -100,7 +103,7 @@ case class Matrix[A](input: Vector[Vector[A]]):
     require(size == other.size, "Can't zip matrices of different dimensions")
     Matrix(input.zip(other.input).map((row, otherRow) => row.zip(otherRow)))
 
-  def zipWithIndex: Matrix[(A, (Int, Int))] = zip(indices)
+  def zipWithIndex: Matrix[(A, Pos2D)] = zip(indices)
 
   def zipWith[B, C](other: Matrix[B])(f: (A, B) => C): Matrix[C] = zip(other) map f.tupled
 
@@ -112,10 +115,10 @@ object Matrix:
   enum Axis:
     case X, Y, Z
 
-  def apply[A](height: Int, width: Int)(f: (Int, Int) => A): Matrix[A] = 
+  def apply[A](height: Int, width: Int)(f: Pos2D => A): Matrix[A] = 
     Matrix((0 until height).toVector.map(row => (0 until width).toVector.map(col => f(row, col))))
   
-  // def apply[A](tup: (Int, Int))(f: (Int, Int) => A): Matrix[A] = 
+  // def apply[A](tup: Pos2D)(f: Pos2D => A): Matrix[A] = 
   //   Matrix(tup.x, tup.y)((r, c) => f(r, c))
 
   /** Creates an [identity matrix](https://en.wikipedia.org/wiki/Identity_matrix) of the given dimension. */
@@ -164,8 +167,6 @@ extension [A: Numeric](xs: Vector[A])
 extension [A: Numeric](mat: Matrix[A])
   def sum = mat.toVector.flatten.sum
   def product = mat.toVector.flatten.product
-  def +(other: Matrix[A]) = mat zip other map (_ + _)
-  def -(other: Matrix[A]) = mat zip other map (_ - _)
   def *(other: Matrix[A]): Matrix[A] = 
     require(mat.width == other.height)
     Matrix(mat.height, other.width)((r, c) => mat.row(r) dot other.col(c))
