@@ -109,6 +109,9 @@ package object utils:
     def findWith(regex: String) = regex.r.findFirstIn(str)
     def findMatchWith(regex: String) = regex.r.findFirstMatchIn(str)
 
+  extension (b: Boolean)
+    def toInt = if b then 1 else 0
+
   extension (tup: (Int, Int))
     def transpose = (tup._2, tup._1)
     

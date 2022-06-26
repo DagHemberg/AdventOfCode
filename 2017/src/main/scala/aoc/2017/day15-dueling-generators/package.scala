@@ -10,7 +10,7 @@ package object day15:
   val bFac = 48271
 
   def next(value: Long, factor: Long) = (value * factor).toLong % Int.MaxValue
-  def judge(a: Long, b: Long) = if (a & 0xffff) == (b & 0xffff) then 1 else 0
+  def judge(a: Long, b: Long) = ((a & 0xffff) == (b & 0xffff)).toInt
   
   def nextMult(value: Long, fac: Long, mult: Long): Long =
     next(value, fac).doUntil(_ % mult == 0)(n => next(n, fac))

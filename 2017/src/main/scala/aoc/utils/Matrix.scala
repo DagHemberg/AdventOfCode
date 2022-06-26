@@ -120,7 +120,7 @@ object Matrix:
 
   /** Creates an [identity matrix](https://en.wikipedia.org/wiki/Identity_matrix) of the given dimension. */
   def identity(size: Int): Matrix[Int] = 
-    Matrix(size, size)((row, col) => if row == col then 1 else 0)
+    Matrix(size, size)((row, col) => (row == col).toInt)
 
   def fill[A](height: Int, width: Int)(value: A): Matrix[A] = 
     Matrix(height, width)((a, b) => value)
