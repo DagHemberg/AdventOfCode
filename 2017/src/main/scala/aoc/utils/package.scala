@@ -45,8 +45,9 @@ package object utils:
       a
 
     /** Uses a [[scala.collection.immutable.LazyList]] to apply any function `A => A` on any object `n` times. */
-    def iterate(f: A => A): LazyList[A] = 
-      LazyList.iterate(a)(f)
+    def iterate(f: A => A)(n: Int): A = 
+      if n <= 0 then a
+      else f(a).iterate(f)(n - 1)
 
     /** Recursively applies a function `f: A => A` on any object `a` until the predicate `p` is satisfied.
      */
@@ -100,7 +101,7 @@ package object utils:
   extension (str: String)
     def words = str.split("\\s+").toList
     def padLeftTo(n: Int, char: Char) = str.reverse.padTo(n, char).reverse
-    def findAllWith(regex: String) = regex.r.findAllMatchIn(str).toList
+    def findAllWith(regex: String) = regex.r.findAllIn(str).toList
     def findAllMatchWith(regex: String) = regex.r.findAllMatchIn(str).toList
     def findWith(regex: String) = regex.r.findFirstIn(str)
     def findMatchWith(regex: String) = regex.r.findFirstMatchIn(str)
