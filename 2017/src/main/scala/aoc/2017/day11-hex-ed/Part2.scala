@@ -8,7 +8,7 @@ object Part2 extends Problem("2017", "11", "2")(3):
 
     def furthestOut(ls: List[String]) = 
       ls.foldLeft((0, start)){ case ((furthest, pos), dir) => 
-        val newPos = pos + Pos3D(move(dir))
+        val newPos = pos move parse(dir)
         (furthest max (newPos manhattan start) / 2, newPos)
       }.head
 

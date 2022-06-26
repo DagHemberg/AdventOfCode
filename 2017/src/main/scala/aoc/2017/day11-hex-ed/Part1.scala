@@ -7,6 +7,6 @@ object Part1 extends Problem("2017", "11", "1")(3):
     val path = data.head.split(",").toList
 
     def traverse(ls: List[String]) = 
-      ls.foldLeft(start)((pos, dir) => pos + Pos3D(move(dir)))
+      ls.foldLeft(start)((pos, dir) => pos move parse(dir))
 
     (traverse(path) manhattan start) / 2

@@ -8,6 +8,6 @@ object Part2 extends Problem("2017", "22", "2")(2511944):
     val grid = collectFrom(mat)
     val center = (mat.height / 2, mat.width / 2)
 
-    var virus = Virus(Pos(center), Direction.Up, 0, grid)
-    for i <- 1 to 10_000_000 do virus = virus.moveEvolved
-    virus.infections
+    Virus(center, Cardinal.North, 0, grid)
+      .iterate(_.moveEvolved)(10_000_000)
+      .infections

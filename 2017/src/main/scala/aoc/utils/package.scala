@@ -5,32 +5,11 @@ import math.Fractional.Implicits.infixFractionalOps
 import Console.*
 
 package object utils:
+  type Vec2 = (Int, Int)
   type Pos2D = (Int, Int)
+
   type Vec3 = (Int, Int, Int)
-
-  // WIP DIRECTION CLASS(ES)
-  // trait Cardinal(x: Int, y: Int):
-  //   def move(pos: Pos2D) = (pos.x + x, pos.y + y)
-
-  // trait Hex(q: Int, r: Int, s: Int):
-  //   def move(vec: Vec3) = (vec.q + q, vec.r + r, vec.s + s)
-
-  // enum Direction:
-  //   case North     extends Direction with Cardinal(0, -1) with Hex(0, -1, 1)
-  //   case NorthEast extends Direction with Cardinal(1, -1) with Hex(1, -1, 0)
-  //   case East      extends Direction with Cardinal(1, 0)
-  //   case SouthEast extends Direction with Cardinal(1, 1) with Hex(1, 0, -1) 
-  //   case South     extends Direction with Cardinal(0, 1) with Hex(0, 1, -1) 
-  //   case SouthWest extends Direction with Cardinal(-1, 1) with Hex(-1, 1, 0)
-  //   case West      extends Direction with Cardinal(-1, 0)
-  //   case NorthWest extends Direction with Cardinal(-1, -1) with Hex(-1, 0, 1)
-    
-  //   import Direction.*
-  //   def left = fromOrdinal(this.ordinal + 2 % 8)
-  //   def right = fromOrdinal(this.ordinal + 6 % 8)
-  //   def reverse = fromOrdinal(this.ordinal + 4 % 8)
-  //   def clockwise = fromOrdinal(this.ordinal + 1 % 8)
-  //   def counterclockwise = fromOrdinal(this.ordinal + 7 % 8)
+  type Pos3D = (Int, Int, Int)
 
   extension [A](a: A)
     /** Logs any object `a` in the console and then returns the object without modifying it. */
@@ -76,14 +55,12 @@ package object utils:
       if n <= 0 then a
       else f(a).iterate(f)(n - 1)
 
-    /** Recursively applies a function `f: A => A` on any object `a` until the predicate `p` is satisfied.
-     */
+    /** Recursively applies a function `f: A => A` on any object `a` until the predicate `p` is satisfied. */
     def doUntil(p: A => Boolean)(f: A => A): A = 
       if p(a) then a
       else f(a).doUntil(p)(f)
 
-    /** Recursively applies a function `f: A => A` on any object `a` until `f(a)` is equal to `a`. Shorthand for `doUntil(_ == f(a))(f)`.
-     */
+    /** Recursively applies a function `f: A => A` on any object `a` until `f(a)` is equal to `a`. */
     def converge(f: A => A): A = 
       val fa = f(a)
       if a == fa then a
@@ -104,9 +81,9 @@ package object utils:
     def rms = math.sqrt(xs.map(x => x * x).sum.toDouble / xs.size)
 
   extension [A: Numeric](xs: Vector[A])
-    def toPos3D = 
+    def toVec3 = 
       require(xs.size == 3)
-      Pos3D(xs(0).toInt, xs(1).toInt, xs(2).toInt)
+      (xs(0).toInt, xs(1).toInt, xs(2).toInt)
 
     /** Computes the [dot product](https://en.wikipedia.org/wiki/Dot_product) of 2 vectors of the same length. */
     infix def dot (ys: Vector[A]) = 
@@ -150,8 +127,8 @@ package object utils:
     
     def row = tup._1
     def col = tup._2
-    def x = tup._1
-    def y = tup._2
+    def x = tup._2
+    def y = tup._1
 
     def +(other: Pos2D) = (tup._1 + other._1, tup._2 + other._2)
     def -(other: Pos2D) = (tup._1 - other._1, tup._2 - other._2)
@@ -176,10 +153,14 @@ package object utils:
     def neighboursOrthIn[A](using mat: Matrix[A]) = tup.outsideFilter(tup.neighboursOrth)
     def neighboursDiagIn[A](using mat: Matrix[A]) = tup.outsideFilter(tup.neighboursDiag)
 
-    private def toVector = Vector(tup._1, tup._2)
+    def toVector = Vector(tup._1, tup._2)
 
     def distance(other: Pos2D) = 
       (tup - other).toVector.magnitude
+    def manhattan(other: Pos2D) = 
+      (tup - other).toVector.map(math.abs).sum
+
+    def move(dir: Cardinal) = tup + dir.toPos2D
 
   extension (v: Vec3)
     def x = v._1
@@ -197,43 +178,46 @@ package object utils:
     def distance(other: Vec3) = (v - other).toVector.magnitude
     def manhattan(other: Vec3) = (v - other).toVector.map(math.abs).sum
 
-  /** Represents a position in 2D space */
-  @deprecated("Use (Int, Int) / Pos2D instead", "0.2")
-  case class Pos(x: Int, y: Int):
-    /** Switches the x and y coordinates */
-    def transpose = Pos(y, x)
-    def tuple = (x, y)
-    
-    def +(p: Pos) = Pos(x + p.x, y + p.y)
-    def -(p: Pos) = Pos(x - p.x, y - p.y)
+    def move(dir: Hex) = v + dir.toVec3
 
-    def distance(p: Pos) = math.sqrt(math.pow((x - p.x), 2) + math.pow((y - p.y), 2))
-    def manhattan(p: Pos) = math.abs(x - p.x) + math.abs(y - p.y)
+    infix def dot(other: Vec3): Double = v.toVector dot other.toVector
+    infix def cross(other: Vec3): Vec3 = (v.toVector cross other.toVector).toVec3
 
-  object Pos:
-    def apply(tup: Pos2D): Pos = Pos(tup._1, tup._2)
-
-  /** Represents a position in 3D space */
-  @deprecated("Use (Int, Int, Int) / Vec3 instead", "0.2")
-  case class Pos3D(x: Int, y: Int, z: Int):
-    def tuple = (x, y, z)
-    def toVector = Vector(x, y, z)
-    
-    def +(p: Pos3D) = Pos3D(x + p.x, y + p.y, z + p.z)
-    def -(p: Pos3D) = Pos3D(x - p.x, y - p.y, z - p.z)
-    
-    private def diff(p: Pos3D) = toVector.zipWith(p.toVector)(_ - _)
-
-    def distance(p: Pos3D) = 
-      diff(p).toVector.magnitude
-    def manhattan(p: Pos3D) = 
-      diff(p).map(math.abs).sum
-  
-  object Pos3D:
-    def apply(tup: (Int, Int, Int)): Pos3D = Pos3D(tup._1, tup._2, tup._3)
-
-  case class Line(start: Pos, end: Pos)
+  case class Line(start: Pos2D, end: Pos2D)
   case class Line3D(start: Pos3D, end: Pos3D)
+
+  enum Cardinal(y: Int, x: Int):
+    import Cardinal.*
+    case North     extends Cardinal(-1, 0)
+    case NorthEast extends Cardinal(-1, 1)
+    case East      extends Cardinal(0, 1)
+    case SouthEast extends Cardinal(1, 1)
+    case South     extends Cardinal(1, 0)
+    case SouthWest extends Cardinal(1, -1)
+    case West      extends Cardinal(0, -1)
+    case NorthWest extends Cardinal(-1, -1)
+    def left = fromOrdinal((this.ordinal + 6) % 8)
+    def right = fromOrdinal((this.ordinal + 2) % 8)
+    def reverse = fromOrdinal((this.ordinal + 4) % 8)
+    def clockwise = fromOrdinal((this.ordinal + 1) % 8)
+    def counterClockwise = fromOrdinal((this.ordinal + 7) % 8)
+    def toPos2D = (y, x)
+    def toVec2 = (y, x)
+
+  enum Hex(q: Int, r: Int, s: Int):
+    import Hex.*
+    case North     extends Hex(0, -1, 1)
+    case NorthEast extends Hex(1, -1, 0)
+    case SouthEast extends Hex(1, 0, -1)
+    case South     extends Hex(0, 1, -1)
+    case SouthWest extends Hex(-1, 1, 0)
+    case NorthWest extends Hex(-1, 0, 1)
+    def reverse = fromOrdinal((this.ordinal + 3) % 6)
+    def clockwise = fromOrdinal((this.ordinal + 1) % 6)
+    def counterClockwise = fromOrdinal((this.ordinal + 5) % 6)
+    val (x, y, z) = (q, r, s)
+    def toPos3D = (q, r, s)
+    def toVec3 = (x, y, z)
 
   /** A simple wrapper class that includes the result of an evaluation and the time (in seconds) it took to evaluate it
    * @param result The final evaluation
