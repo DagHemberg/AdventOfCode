@@ -57,7 +57,10 @@ package object utils:
 
     /** Recursively applies a function `f: A => A` on any object `a` until `f(a)` is equal to `a`. Shorthand for `doUntil(_ == f(a))(f)`.
      */
-    def converge(f: A => A): A = a.doUntil(x => x == f(x))(f)
+    def converge(f: A => A): A = 
+      val fa = f(a)
+      if a == fa then a
+      else fa.converge(f)
 
   extension [A](xs: IndexedSeq[A])
     /** Zips two sequences and applies a function on the resulting tuples. Functionally equivalent to `.zip(...).map(...)`. */
