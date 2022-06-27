@@ -6,10 +6,10 @@ import Console.*
 
 package object utils:
   type Vec2 = (Int, Int)
-  type Pos2D = (Int, Int)
+  type Pos2D = Vec2
 
   type Vec3 = (Int, Int, Int)
-  type Pos3D = (Int, Int, Int)
+  type Pos3D = Vec3
 
   extension [A](a: A)
     /** Logs any object `a` in the console and then returns the object without modifying it. */
@@ -142,9 +142,12 @@ package object utils:
     def dl = (tup.row + 1, tup.col - 1)
     def dr = (tup.row + 1, tup.col + 1)
 
-    def neighbours: List[Pos2D] = List(tup.up, tup.down, tup.left, tup.right, tup.ul, tup.ur, tup.dl, tup.dr)
-    def neighboursOrth = List(tup.up, tup.left, tup.right, tup.down)
-    def neighboursDiag = List(tup.ul, tup.ur, tup.dl, tup.dr)
+    def neighbours: List[Pos2D] = 
+      List(tup.up, tup.down, tup.left, tup.right, tup.ul, tup.ur, tup.dl, tup.dr)
+    def neighboursOrth = 
+      List(tup.up, tup.left, tup.right, tup.down)
+    def neighboursDiag = 
+      List(tup.ul, tup.ur, tup.dl, tup.dr)
 
     private def outsideFilter[A](list: List[Pos2D])(using mat: Matrix[A]) = 
       list filterNot mat.indexOutsideBounds map mat.apply
@@ -182,6 +185,9 @@ package object utils:
 
     infix def dot(other: Vec3): Double = v.toVector dot other.toVector
     infix def cross(other: Vec3): Vec3 = (v.toVector cross other.toVector).toVec3
+    def magnitude: Double = v.toVector.magnitude
+    def normalized: Vec3 = v.toVector.normalized.toVec3
+
 
   case class Line(start: Pos2D, end: Pos2D)
   case class Line3D(start: Pos3D, end: Pos3D)
