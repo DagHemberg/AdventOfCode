@@ -14,12 +14,12 @@ case class Tree[V](value: V, children: Set[Tree[V]] = Set.empty[Tree[V]]):
 /** 
   * @param from the source vertex
   * @param to the destination vertex
-  * @param cost the cost of traveling along this edge
+  * @param weight the cost of traveling along this edge
   */
-case class Edge[V](u: V, v: V, weight: Double):
-  val (from, to) = (u, v)
-  lazy val reverse = Edge(v, u, weight)
-  override def toString = s"$u -> $v @ $weight"
+case class Edge[V](from: V, to: V, weight: Double = 1):
+  val (u, v) = (from, to)
+  lazy val reverse = Edge(to, from, weight)
+  override def toString = s"Edge($from -> $to, $weight)"
 
 /** 
   * @param vertices the ordered sequence of vertices making up the path
@@ -30,7 +30,7 @@ case class Path[V](vertices: Seq[V], cost: Double):
   def apply = vertices.apply
   def head = vertices.head
   def last = vertices.last
-  override def toString = s"[${vertices.mkString(" -> ")}] @ $cost"
+  override def toString = s"Path(${vertices.mkString(" -> ")}, $cost)"
 
 case class DisjointSets[V](nodes: V*):
   override def toString = parents.groupBy(_._2).map(_._2).toSet.mkString("[", ", ", "]")
