@@ -8,5 +8,10 @@ lazy val root = project
       "io.github.daghemberg" %% "paut-program" % "0.1.4",
       "io.github.daghemberg" %% "problemutils" % "0.1.1",
       // add your own dependencies here!
-    )
+      ),
+      console / initialCommands  := 
+        """|import paut.aoc.*
+           |import problemutils.*
+           |import extensions.*""".stripMargin,
   )
+  
