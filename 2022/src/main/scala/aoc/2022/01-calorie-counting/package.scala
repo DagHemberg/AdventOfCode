@@ -4,5 +4,5 @@ import problemutils.*, extensions.*
 def parse(data: List[String]) = 
   data
     .mkString("\n")
-    .split("\n\n").toVector
+    .split("\n\n").toList
     .map(_.split("\n").map(_.toInt).sum)
