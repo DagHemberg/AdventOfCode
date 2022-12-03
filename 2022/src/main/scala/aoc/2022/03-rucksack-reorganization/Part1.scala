@@ -7,5 +7,5 @@ object Part1 extends Problem(3, 2022)(1)(157):
   def solve(data: List[String]) = data
     .map { rucksack => 
       val (first, second) = rucksack.splitAt(rucksack.size / 2)
-      priority(first.intersect(second).distinct)
+      priority(first.intersect(second).head)
     }.sum
