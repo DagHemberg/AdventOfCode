@@ -1,5 +1,22 @@
 # AdventOfCode
 
-These are my solutions for [Advent of Code](https://adventofcode.com). Currently only 2021, might do more later.
+These are my solutions for [Advent of Code](https://adventofcode.com). 
 
-Written mostly in Scala but some TypeScript managed to sneak in as well
+## Status
+
+Completed:
+
+- 2021 (scala, typescript)
+- 2017 (scala)
+
+In progress:
+
+- 2022 (scala)
+
+Planned:
+
+- 2020 (haskell?)
+- 2019
+- 2018 
+- 2016 (rust?)
+- 2015
