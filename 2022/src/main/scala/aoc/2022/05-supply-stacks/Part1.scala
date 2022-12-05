@@ -8,4 +8,4 @@ object Part1 extends Problem(5, 2022)(1)("CMZ"):
     given Stacks = parseStacks(data)
     given List[Move] = parseInstructions(data)
 
-    moveCrates(strat = _.reverse)
+    moveCrates(using pickupStrat = _.reverse)

@@ -8,4 +8,4 @@ object Part2 extends Problem(5, 2022)(2)("MCD"):
     given Stacks = parseStacks(data)
     given List[Move] = parseInstructions(data)
 
-    moveCrates(strat = identity)
+    moveCrates(using pickupStrat = identity)

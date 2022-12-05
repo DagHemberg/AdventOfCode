@@ -23,15 +23,15 @@ def parseInstructions(data: List[String]) = data
   }
   .toList
 
-def moveCrates(strat: Crates => Crates)(using initStacks: Stacks, instructions: List[Move]) = 
-  instructions
-    .foldLeft(initStacks) { (stacks, mv) => 
-      val newOrigin = stacks(mv.from).drop(mv.amount)
-      val newDest = stacks(mv.from).take(mv.amount).pipe(strat) ++ stacks(mv.to)
+def update(stacks: Stacks, move: Move)(using pickupStrat: Crates => Crates) = 
+  val newOrigin = stacks(move.from).drop(move.amount)
+  val newDest = stacks(move.from).take(move.amount).pipe(pickupStrat) ++ stacks(move.to)
+  stacks
+    .updated(move.to, newDest)
+    .updated(move.from, newOrigin)
 
-      stacks
-        .updated(mv.to, newDest)
-        .updated(mv.from, newOrigin)
-    }
+def moveCrates(using initStacks: Stacks, instructions: List[Move], pickupStrat: Crates => Crates) = 
+  instructions
+    .foldLeft(initStacks)(update)
     .map(_.head)
     .mkString
