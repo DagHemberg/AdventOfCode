@@ -1,8 +1,16 @@
 package problemutils
 
 import math.Numeric.Implicits.infixNumericOps
+import scala.util.chaining
 
 // todo: move to problemutils repo once aoc is done
+
+extension [A](a: A)
+  def tap[U](f: A => U) = 
+    f(a)
+    a
+
+  def pipe[B](f: A => B) = f(a)
 
 extension (s1: String) 
   def to(s2: String) = s1.toInt to s2.toInt
