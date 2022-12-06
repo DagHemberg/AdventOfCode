@@ -30,8 +30,8 @@ def update(stacks: Stacks, move: Move)(using pickupStrat: Crates => Crates) =
     .updated(move.to, newDest)
     .updated(move.from, newOrigin)
 
-def moveCrates(using initStacks: Stacks, instructions: List[Move], pickupStrat: Crates => Crates) = 
+def moveCrates(using stacks: Stacks, instructions: List[Move], pickupStrat: Crates => Crates) = 
   instructions
-    .foldLeft(initStacks)(update)
+    .foldLeft(stacks)(update)
     .map(_.head)
     .mkString
