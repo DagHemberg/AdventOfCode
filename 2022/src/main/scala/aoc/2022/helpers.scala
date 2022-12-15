@@ -23,3 +23,7 @@ extension [A] (xs: Seq[A])
         case -1 => remaining :: acc
         case i => rec(remaining.drop(i + 1), remaining.take(i) :: acc)
     rec(xs, Nil).reverse
+
+extension [A] (mat: Matrix[A])
+  def find(pred: A => Boolean) = mat.toVector.find(pred)
+  def indexWhere(pred: A => Boolean) = mat.zipWithIndex.find((a, b) => pred(a)).map(_._2)
