@@ -3,7 +3,7 @@ import problemutils.*, extensions.*
 
 import Cardinal.*
 
-def determineStepDirection(a: Pos2D, b: Pos2D) = a - b match
+def stepDirection(a: Pos2D, b: Pos2D) = a - b match
   case ( 2,  2) => NorthWest
   case ( 2, -2) => NorthEast
   case (-2,  2) => SouthWest
@@ -15,26 +15,25 @@ def determineStepDirection(a: Pos2D, b: Pos2D) = a - b match
 
 case class Rope(knots: List[Pos2D], visited: Set[Pos2D]):      
   def moved(steps: Cardinal*) = steps
-    .foldLeft(this) { (rope, step) => 
+    .foldLeft(this): (rope, step) => 
       val newKnots = rope
         .knots.tail
-        .scanLeft(rope.knots.head + step.toPos2D) { (head, tail) => 
+        .scanLeft(rope.knots.head + step.toPos2D): (head, tail) => 
           if (head.neighbours :+ head) contains tail then tail
-          else head + determineStepDirection(head, tail).toPos2D
-        }
+          else head move stepDirection(head, tail)
       Rope(newKnots, rope.visited + newKnots.last)
-    }
 
 object Rope:
   def ofLength(len: Int) = Rope(List.fill(len)(0, 0), Set((0, 0)))
 
-def parse(data: List[String])(using init: Rope) = data.foldLeft(init) { (rope, line) => 
-  val steps = line match
-    case s"$dir $amount" => List.fill(amount.toInt) { dir match
-      case "U" => North
-      case "D" => South
-      case "R" => East
-      case "L" => West
-    }
-  rope.moved(steps*)
-}.visited
+def simulate(data: List[String])(using init: Rope) = 
+  data.foldLeft(init): (rope, line) => 
+    val steps = line match
+      case s"$dir $amount" => List.fill(amount.toInt) { dir match
+        case "U" => North
+        case "D" => South
+        case "R" => East
+        case "L" => West
+      }
+    rope.moved(steps*)
+  .visited

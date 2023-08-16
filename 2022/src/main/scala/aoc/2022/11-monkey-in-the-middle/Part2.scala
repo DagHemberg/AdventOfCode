@@ -9,7 +9,7 @@ object Part2 extends Problem(11, 2022)(2)(2713310158L):
     var monkeys = parse(data)
     for i <- 1 to 10_000 do
       for n <- monkeys.indices do
-        monkeys(n).items.foreach { item => 
+        monkeys(n).items.foreach: item => 
           val current @ Monkey(id, _, operation, determineNext, _) = monkeys(n)
 
           val res = operation(item) % mod
@@ -22,7 +22,6 @@ object Part2 extends Problem(11, 2022)(2)(2713310158L):
               items = current.items.tail,
               inspections = current.inspections + 1
             ))
-        }
 
     monkeys
       .map(_.inspections)

@@ -5,13 +5,13 @@ import problemutils.*, extensions.*
 object Part2 extends Problem(13, 2022)(2)(140):
   def name = "Distress Signal - Part 2"
   def solve(data: List[String]) = 
-    val divider1 = Packet.from("[[2]]")
-    val divider2 = Packet.from("[[6]]")
+    val dividers = Seq("[[2]]", "[[6]]").map(Packet.parse)
 
     val packets = parse(data)
       .flatten
-      .appendedAll(List(divider1, divider2))
+      .appendedAll(dividers)
       .sorted
     
-    val Seq(fst, snd) = Seq(divider1, divider2).map(x => packets.indexOf(x) + 1)    
-    fst * snd
+    dividers
+      .map(packet => packets.indexOf(packet) + 1)
+      .product 

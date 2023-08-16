@@ -8,7 +8,7 @@ def out(crtPos: Int, spritePos: Int) =
   then "█" else " "
 
 def parse(data: List[String]) = 
-  data.scanLeft(new Register) { (reg, line) => 
+  data.scanLeft(new Register): (reg, line) => 
     val Register(value, cycle, output) = reg
     line match
       case s"addx $n" => 
@@ -17,4 +17,3 @@ def parse(data: List[String]) =
         Register(value + n.toInt, cycle + 2, s"$output$fst$snd")
       case "noop"     => 
         Register(value, cycle + 1, s"$output${out(cycle, value)}")
-  }

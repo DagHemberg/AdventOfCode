@@ -2,11 +2,11 @@ package aoc.y2022.day02
 import problemutils.*, extensions.*
 
 enum Move:
+  case Rock, Paper, Scissors
   def score = ordinal + 1
   def next = Move.values((ordinal + 1) % 3)
   def prev = Move.values((ordinal + 2) % 3)
   def winsOver(that: Move) = this == that.next
-  case Rock, Paper, Scissors
 
 def points(opponent: Move, me: Move) = 
   if opponent == me then 3

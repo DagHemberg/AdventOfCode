@@ -1,14 +1,14 @@
 package aoc.y2022.day12
 import problemutils.*, extensions.*
 
-def parse(data: List[String]) = Matrix.from(data.map(_.toSeq)).zipWithIndex
+def parse(data: List[String]) = Matrix.from(data.map(_.toSeq))
 
-def makeGraph(init: Matrix[(Char, Pos2D)]) = 
-  given mat: Matrix[(Int, Pos2D)] = init.map { 
-    case ('S', i) => (1, i)
-    case ('E', i) => (26, i)
-    case (c, i) => (c.toInt - 96, i)
-  }
+def makeGraph(init: Matrix[Char]) = 
+  given mat: Matrix[(Int, Pos2D)] = init.map:
+    case 'S' => 1
+    case 'E' => 26
+    case c => c.toInt - 96
+  .zipWithIndex
   
   val edges = mat
     .toVector

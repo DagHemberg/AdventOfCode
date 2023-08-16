@@ -9,7 +9,7 @@ object Part1 extends Problem(11, 2022)(1)(10605L):
     for i <- 1 to 20 do
       for n <- monkeys.indices do
         val items = monkeys(n).items
-        items.foreach { item => 
+        items.foreach: item => 
           val current @ Monkey(id, _, operation, determineNext, _) = monkeys(n)
 
           val res = operation(item) / 3
@@ -22,7 +22,6 @@ object Part1 extends Problem(11, 2022)(1)(10605L):
               items = current.items.tail,
               inspections = current.inspections + 1
             ))
-        }
 
     monkeys
       .map(_.inspections)

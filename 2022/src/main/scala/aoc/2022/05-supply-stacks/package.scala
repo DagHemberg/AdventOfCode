@@ -7,20 +7,19 @@ case class Move(amount: Int, from: Int, to: Int)
 
 def parseStacks(data: List[String]) = data
   .split("").head.init
-  .map { _
-    .sliding(4, 4)
+  .map: 
+    _.grouped(4)
     .map(_.trim())
     .toList
-  }
   .transpose
   .map(_.collect { case s"[$crate]" => crate } )
   .toVector
 
 def parseInstructions(data: List[String]) = data
   .split("").last
-  .map { case s"move $amount from $origin to $dest" => 
-    Move(amount.toInt, origin.toInt - 1, dest.toInt - 1) 
-  }
+  .map:
+    case s"move $amount from $origin to $dest" => 
+      Move(amount.toInt, origin.toInt - 1, dest.toInt - 1) 
   .toList
 
 def update(stacks: Stacks, move: Move)(using pickupStrat: Crates => Crates) = 

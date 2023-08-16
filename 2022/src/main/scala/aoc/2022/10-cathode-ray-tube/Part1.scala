@@ -9,7 +9,6 @@ object Part1 extends Problem(10, 2022)(1)(13140):
 
     List
       .iterate(20, 6)(_ + 40)
-      .sumBy { cycle => 
+      .sumBy: cycle => 
         cycle * registers(registers.indexWhere(_.cycle >= cycle) - 1).value
-      }
     

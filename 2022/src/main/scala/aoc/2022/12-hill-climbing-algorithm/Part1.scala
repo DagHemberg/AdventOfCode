@@ -8,8 +8,8 @@ object Part1 extends Problem(12, 2022)(1)(31):
     val matrix = parse(data)
     val graph = makeGraph(matrix)
 
-    val stop  = matrix.toVector.collect { case ('E', i) => i }.head
-    val start = matrix.toVector.collect { case ('S', i) => i }.head
+    val stop  = matrix.indexWhere(_ == 'E').get
+    val start = matrix.indexWhere(_ == 'S').get
     
     graph
       .pathBetween(start, stop)

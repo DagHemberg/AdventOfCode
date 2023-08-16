@@ -12,12 +12,13 @@ case class Monkey (
 
 def mods(data: List[String]) = data
   .map(_.trim())
-  .collect { case s"Test: divisible by $mod" => mod.toLong }
+  .collect:
+    case s"Test: divisible by $mod" => mod.toLong
   .product
 
 def parse(data: List[String]) = data
   .split("")
-  .map { monkey => 
+  .map: monkey => 
     val attributes = monkey.map(_.trim()) 
     
     val index = attributes(0) match 
@@ -43,4 +44,3 @@ def parse(data: List[String]) = data
         (pred: Boolean) => if pred then t.toInt else f.toInt
 
     Monkey(index, items, operation, test andThen recipient)
-  }
