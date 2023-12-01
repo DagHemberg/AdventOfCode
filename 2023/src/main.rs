@@ -1,10 +1,10 @@
-use adventofcode::template::commands::{all, download, read, scaffold, solve};
+use advent_of_code::template::commands::{all, download, read, scaffold, solve};
 use args::{parse, AppArguments};
 
 mod args {
     use std::process;
 
-    use adventofcode::Day;
+    use advent_of_code::Day;
 
     pub enum AppArguments {
         Download {
