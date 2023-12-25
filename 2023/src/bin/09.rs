@@ -2,66 +2,59 @@ use itertools::Itertools;
 
 advent_of_code::solution!(9);
 
-trait Data {
+trait Processing {
     fn calculate_diffs(&self) -> Self;
-    fn make_prediction(&self, backwards: bool) -> i64;
+    fn make_prediction(&self) -> i64;
 }
 
-impl Data for Vec<i64> {
+impl Processing for Vec<i64> {
     fn calculate_diffs(&self) -> Vec<i64> {
         self.iter().tuple_windows().map(|(a, b)| b - a).collect()
     }
 
-    fn make_prediction(&self, backwards: bool) -> i64 {
+    fn make_prediction(&self) -> i64 {
         if let Ok(&0) = self.iter().all_equal_value() {
             0
         } else {
-            let prediction = self.calculate_diffs().make_prediction(backwards);
-            if backwards {
-                self.first().unwrap_or(&0) - prediction
-            } else {
-                self.last().unwrap_or(&0) + prediction
-            }
+            self.last().unwrap_or(&0) + self.calculate_diffs().make_prediction()
         }
     }
 }
 
-struct Sensor {
-    data: Vec<i64>,
-}
-
-impl Sensor {
-    fn parse(input: &str) -> Sensor {
+struct Reading(Vec<i64>);
+impl Reading {
+    fn parse(input: &str) -> Reading {
         let data = input
             .split_whitespace()
             .flat_map(|s| s.parse::<i64>())
-            .collect::<Vec<_>>();
+            .collect_vec();
 
-        Sensor { data }
+        Reading(data)
+    }
+
+    fn rev(mut self) -> Reading {
+        self.0.reverse();
+        self
     }
 
     fn predict(&self) -> Option<i64> {
-        Some(self.data.make_prediction(false))
-    }
-
-    fn extrapolate(&self) -> Option<i64> {
-        Some(self.data.make_prediction(true))
+        Some(self.0.make_prediction())
     }
 }
 
 pub fn part_one(input: &str) -> Option<i64> {
     input
         .lines()
-        .map(Sensor::parse)
-        .map(|sensor| sensor.predict())
+        .map(Reading::parse)
+        .map(|data| data.predict())
         .sum()
 }
 
 pub fn part_two(input: &str) -> Option<i64> {
     input
         .lines()
-        .map(Sensor::parse)
-        .map(|sensor| sensor.extrapolate())
+        .map(Reading::parse)
+        .map(|data| data.rev().predict())
         .sum()
 }
 
