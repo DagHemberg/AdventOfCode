@@ -48,7 +48,7 @@ impl Iterator for DoubleList {
 pub fn part_one(input: &str) -> Option<u32> {
     let mut dl = DoubleList::from(input);
     dl.sort();
-    let res: u32 = dl.map(|(a, b)| (a as i32 - b as i32).unsigned_abs()).sum();
+    let res = dl.map(|(a, b)| a.abs_diff(b)).sum();
 
     Some(res)
 }
