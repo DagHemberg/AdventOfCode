@@ -8,5 +8,7 @@ solve = "run --quiet --release -- solve"
 all = "run --quiet --release -- all"
 time = "run --quiet --release -- time"
 
+t = "test --bin"
+
 [env]
 AOC_YEAR = "2024"
