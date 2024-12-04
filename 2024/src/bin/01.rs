@@ -48,21 +48,17 @@ impl Iterator for DoubleList {
 pub fn part_one(input: &str) -> Option<u32> {
     let mut dl = DoubleList::from(input);
     dl.sort();
-    let res = dl.map(|(a, b)| a.abs_diff(b)).sum();
-
-    Some(res)
+    dl.map(|(a, b)| a.abs_diff(b)).sum::<u32>().into()
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
     let dl = DoubleList::from(input);
     let counts = dl.right.into_iter().counts();
-    let res: u32 = dl
-        .left
+    dl.left
         .into_iter()
         .flat_map(|n| counts.get(&n).map(|c| (*c as u32) * n))
-        .sum();
-
-    Some(res)
+        .sum::<u32>()
+        .into()
 }
 
 #[cfg(test)]

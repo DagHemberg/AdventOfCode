@@ -24,9 +24,10 @@ fn validate(line: &[u32]) -> bool {
 }
 
 pub fn part_one(input: &str) -> Option<usize> {
-    let res: usize = parse(input).filter(|nums| validate(nums)).count();
-
-    Some(res)
+    parse(input)
+        .filter(|nums| validate(nums))
+        .count()
+        .into()
 }
 
 pub fn part_two(input: &str) -> Option<usize> {
@@ -38,11 +39,10 @@ pub fn part_two(input: &str) -> Option<usize> {
         })
     }
 
-    let res: usize = parse(input)
+    parse(input)
         .filter(|nums| validate(nums) || validate_dampened(nums))
-        .count();
-
-    Some(res)
+        .count()
+        .into()
 }
 
 #[cfg(test)]
