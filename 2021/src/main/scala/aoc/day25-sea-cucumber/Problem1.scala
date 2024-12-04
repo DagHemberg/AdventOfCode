@@ -24,7 +24,7 @@ object Problem1 extends Solver("25", 58):
 
   extension (cucumbers: Matrix[Cucumber])
     def stepRight =
-      cucumbers zip cucumbers.indices map ((cucumber, i) =>
+      cucumbers.zip(cucumbers.indices).map((cucumber, i) =>
         cucumber match
           case Empty if cucumbers(i.left % cucumbers.size)  == Right => Right
           case Right if cucumbers(i.right % cucumbers.size) == Empty => Empty
@@ -32,7 +32,7 @@ object Problem1 extends Solver("25", 58):
       )
 
     def stepDown =
-      cucumbers zip cucumbers.indices map ((cucumber, i) =>
+      cucumbers.zip(cucumbers.indices).map((cucumber, i) =>
         cucumber match
           case Empty if cucumbers(i.up % cucumbers.size)   == Down  => Down
           case Down  if cucumbers(i.down % cucumbers.size) == Empty => Empty

@@ -9,6 +9,8 @@ object Problem1 extends Solver("11", 1656):
     var totalBlinks = 0
     for i <- 1 to 100 do
       octopodes = octopodes.step
+      println(octopodes.map(x => if x.energy == 0 then "." else x.energy))
+      Thread.sleep(50)
       totalBlinks += octopodes.count(_.blinked)
 
     totalBlinks
